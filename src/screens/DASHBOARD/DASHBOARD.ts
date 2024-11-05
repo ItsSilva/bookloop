@@ -11,23 +11,27 @@ import { dataPosts } from '../../data/dataPosts';
 import '../../components/postPopUp/postPopUp';
 import PostPopUp, { Attribute3 } from '../../components/postPopUp/postPopUp';
 import '../../components/elements/clubInfo/clubInfo';
-import '../../components/clubsCard/clubsCard';
 import ClubsCard, { AttributeClubsCard } from '../../components/clubsCard/clubsCard';
+import '../../components/clubsCard/clubsCard';
 import { dataClubs } from '../../data/dataClubs';
-import '../../components/logoutButton/logoutButton'; 
-import { appState, dispatch } from '../../store';
-import { getUserNameAction, navigate, setUserCredentials } from '../../store/actions';
+import '../../components/logoutButton/logoutButton';
+import clubInfo, { AttributeClubInfo } from '../../components/elements/clubInfo/clubInfo';
+import '../../components/elements/clubInfo/clubInfo';
+import { appState, dispatch, addObserver } from '../../store';
+import DiscoverLandingCards, { AttributeDiscoverLandingCards } from '../../components/DiscoverLandingCards/DiscoverLandingCards';
+import Banner, { AttributeBanner } from '../../components/banner/banner';
+import { getUserNameAction, navigate, setUserCredentials, getDiscoverCardsAction, getClubsAction} from '../../store/actions';
 import { Screens } from '../../types/store';
 
 class Dashboard extends HTMLElement {
     user: UserInfo[] = [];
     post: Post[] = [];
     currentUserPic: string = '';
-    isUserContainerVisible: boolean = true;
 
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
+        addObserver(this);
 
         this.currentUserPic = dataUsers[0].userpic;
 
@@ -42,43 +46,119 @@ class Dashboard extends HTMLElement {
     }
 
     async connectedCallback() {
-        this.addEventListener('toggle-user-container', () => this.toggleUserContainer());
-        // if (appState.user) {
-        //     const action = await getUserNameAction();
-        //     dispatch(action);
-        // } else {
-        //     this.render();
-        // }
-        const user = localStorage.getItem('user');
-    if (!user) {
-        dispatch(navigate(Screens.LOGIN));
-    }
+        // Cargar las tarjetas de discover si no están cargadas
+        if (appState.cards.length === 0) {
+            const action = await getDiscoverCardsAction();
+            if (action) {
+                dispatch(action);
+            }
+        }
         this.render();
     }
 
-    toggleUserContainer() {
-        this.isUserContainerVisible = !this.isUserContainerVisible;
-        const userContainer = this.shadowRoot?.querySelector('.user-container');
-        const postContainer = this.shadowRoot?.querySelector('.post-container');
-        const container = this.shadowRoot?.querySelector('.container');
-
-        if (userContainer && postContainer && container) {
-            // Ocultar/Mostrar el user-container
-            userContainer.classList.toggle('hidden', !this.isUserContainerVisible);
-
-            // Expandir el post-container y el container principal si user-container está oculto
-            if (!this.isUserContainerVisible) {
-                postContainer.classList.add('expanded');
-                container.classList.add('full-width');
-            } else {
-                postContainer.classList.remove('expanded');
-                container.classList.remove('full-width');
+    async renderUserClubs(container: HTMLElement) {
+        try {
+            const userId = appState.user;
+            
+            if (!userId) {
+                console.error("No user ID found in appState");
+                return;
             }
+
+            container.innerHTML = '';
+
+            if (!Array.isArray(appState.cards)) {
+                console.log("No discover cards found in appState");
+                this.renderEmptyState(container);
+                return;
+            }
+
+            // Filter the cards where the current user is in usersid
+            const userClubs = appState.cards.filter((club: any) => 
+                club.usersid && Array.isArray(club.usersid) && club.usersid.includes(userId)
+            );
+
+            if (userClubs.length === 0) {
+                this.renderEmptyState(container);
+                return;
+            }
+
+            userClubs.forEach((club: any) => {
+                const clubCard = this.ownerDocument.createElement('club-info') as clubInfo;
+                clubCard.setAttribute(AttributeClubInfo.uid, String(club.uid));
+                clubCard.setAttribute(AttributeClubInfo.image, club.image);
+                clubCard.setAttribute(AttributeClubInfo.name, club.name);
+                clubCard.setAttribute(AttributeClubInfo.members, club.members);
+                clubCard.setAttribute(AttributeClubInfo.button, 'Joined');
+                
+                // Apply styles to the button
+                const button = clubCard.shadowRoot?.querySelector('.button') as HTMLButtonElement;
+                if (button) {
+                    button.disabled = true;
+                    button.style.backgroundColor = '#808080';
+                }
+                
+                clubCard.classList.add('user-club-card');
+                container.appendChild(clubCard);
+            });
+
+        } catch (error) {
+            console.error("Error rendering user clubs:", error);
+            this.renderErrorState(container);
         }
+    }
+
+    renderEmptyState(container: HTMLElement) {
+        const emptyState = this.ownerDocument.createElement('div');
+        emptyState.className = 'empty-state';
+        
+        const message = this.ownerDocument.createElement('p');
+        message.textContent = 'No clubs joined yet. Discover new clubs to join!';
+        message.className = 'empty-state-message';
+        
+        const discoverLink = this.ownerDocument.createElement('a');
+        discoverLink.href = '#/discover';
+        discoverLink.textContent = 'Explore Clubs';
+        discoverLink.className = 'discover-link';
+        
+        emptyState.appendChild(message);
+        emptyState.appendChild(discoverLink);
+        container.appendChild(emptyState);
+    }
+
+    renderErrorState(container: HTMLElement) {
+        const errorState = this.ownerDocument.createElement('div');
+        errorState.className = 'error-state';
+        
+        const message = this.ownerDocument.createElement('p');
+        message.textContent = 'Unable to load your clubs. Please try again later.';
+        message.className = 'error-message';
+        
+        const retryButton = this.ownerDocument.createElement('button');
+        retryButton.textContent = 'Retry';
+        retryButton.className = 'retry-button';
+        retryButton.onclick = async () => {
+            const action = await getClubsAction();
+            if (action) {
+                dispatch(action);
+                this.render();
+            }
+        };
+        
+        errorState.appendChild(message);
+        errorState.appendChild(retryButton);
+        container.appendChild(errorState);
     }
 
     render() {
         if (this.shadowRoot) {
+            this.shadowRoot.innerHTML = '';
+
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = '../src/screens/DISCOVERLANDING/DISCOVERLANDING.css';
+            this.shadowRoot.appendChild(link);
+
             const navBar = this.ownerDocument.createElement('nav-bar');
             navBar.setAttribute('icon', "../src/assets/logos/big_logo.png");
             navBar.setAttribute('img', "../src/assets/logos/medium_logo.png");
@@ -106,7 +186,6 @@ class Dashboard extends HTMLElement {
 
             const postContainer = this.ownerDocument.createElement('section');
             postContainer.className = 'post-container';
-
 
             const newPost = this.ownerDocument.createElement('new-post');
             newPost.setAttribute('userpic', this.currentUserPic);
@@ -137,8 +216,6 @@ class Dashboard extends HTMLElement {
                     post.setAttribute('author', dataPost.author);
                     post.setAttribute('desc', dataPost.desc);
 
-
-
                     postDashboard.appendChild(post);
                     this.post.push(post);
                 });
@@ -148,7 +225,6 @@ class Dashboard extends HTMLElement {
 
             postContainer.appendChild(postDashboard);
 
-            // clubs
             const clubsContainer = this.ownerDocument.createElement('section');
             clubsContainer.className = 'clubs-container';
 
@@ -159,27 +235,13 @@ class Dashboard extends HTMLElement {
                 clubsCard1.setAttribute('cardcolor', '#6471C7');
                 clubsCard1.setAttribute('buttoncolor', '#6471C7');
                 clubsContainer.appendChild(clubsCard1);
-
-                const clubsCard2 = this.ownerDocument.createElement('clubs-card') as ClubsCard;
-                clubsCard2.setAttribute('cardtitle', 'Discover');
-                clubsCard2.setAttribute('buttontext', 'Discover now');
-                clubsCard2.setAttribute('cardcolor', '#C2BE4D');
-                clubsCard2.setAttribute('buttoncolor', '#C2BE4D');
-                clubsContainer.appendChild(clubsCard2);
             }
 
-            console.log(clubsContainer);
+            this.renderUserClubs(clubsContainer);
+
             container.appendChild(clubsContainer);
 
-            const logoutButton = this.ownerDocument.createElement('logout-button');
-            logoutButton.setAttribute('text', 'Log out');
-            logoutButton.className = 'logout-button'
-
-            this.shadowRoot.innerHTML = `
-            <link rel="stylesheet" href="../src/screens/DASHBOARD/DASHBOARD.css">
-            `;
             this.shadowRoot.appendChild(navBar);
-            this.shadowRoot.appendChild(logoutButton);
             this.shadowRoot.appendChild(container);
         }
     }
