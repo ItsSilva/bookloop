@@ -146,12 +146,12 @@ class DiscoverLanding extends HTMLElement {
                 clubsCard1.setAttribute('buttoncolor', '#6471C7');
                 clubsContainer.appendChild(clubsCard1);
 
-                const clubsCard2 = this.ownerDocument.createElement('clubs-card') as ClubsCard;
-                clubsCard2.setAttribute('cardtitle', 'Discover');
-                clubsCard2.setAttribute('buttontext', 'Discover now');
-                clubsCard2.setAttribute('cardcolor', '#C2BE4D');
-                clubsCard2.setAttribute('buttoncolor', '#C2BE4D');
-                clubsContainer.appendChild(clubsCard2);
+                // const clubsCard2 = this.ownerDocument.createElement('clubs-card') as ClubsCard;
+                // clubsCard2.setAttribute('cardtitle', 'Discover');
+                // clubsCard2.setAttribute('buttontext', 'Discover now');
+                // clubsCard2.setAttribute('cardcolor', '#C2BE4D');
+                // clubsCard2.setAttribute('buttoncolor', '#C2BE4D');
+                // clubsContainer.appendChild(clubsCard2);
             }
 
             container.appendChild(clubsContainer);
