@@ -16,6 +16,10 @@ class Login extends HTMLElement {
 
 	connectedCallback() {
 		this.render();
+		//validate if user is already logged in
+		if (localStorage.getItem('user')) {
+			dispatch(navigate(Screens.DASHBOARD));
+		}
 	}
 
 	changeEmail(e: any) {
@@ -26,8 +30,14 @@ class Login extends HTMLElement {
 		credentials.password = e.target.value;
 	}
 
-	submitForm() {
-		loginUser(credentials.email, credentials.password);
+	async submitForm() {
+		const result = await loginUser(credentials.email, credentials.password);
+    if (result) {
+        localStorage.setItem('user', JSON.stringify(result.user));
+        dispatch(navigate(Screens.DASHBOARD));
+    } else {
+        console.log("Error logging in");
+    }
 	}
 	
 	redirectToRegister() {
@@ -36,8 +46,8 @@ class Login extends HTMLElement {
 
 	async render() {
 		if (this.shadowRoot) {
-			this.shadowRoot.innerHTML = `
-            <link rel="stylesheet" href="../src/screens/LOGIN/LOGIN.css">`;
+			this.shadowRoot.innerHTML = 
+			`<link rel="stylesheet" href="../src/screens/LOGIN/LOGIN.css">`;
 			
 			const link = document.createElement('link');
             link.rel = 'stylesheet';

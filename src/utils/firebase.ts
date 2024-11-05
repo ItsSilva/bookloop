@@ -1,6 +1,8 @@
 import { browserLocalPersistence } from 'firebase/auth';
-import { appState } from '../store/index';
+import { appState, dispatch } from '../store/index';
 import { addDoc } from 'firebase/firestore';
+import { navigate } from '../store/actions';
+import { Screens } from '../types/store';
 
 let db: any;
 let auth: any;
@@ -79,20 +81,16 @@ export const registerUser = async (credentials: any) => {
 
 export const loginUser = async (email: string, password: string) => {
 	try {
-		const { auth } = await getFirebaseInstance();
-		const { signInWithEmailAndPassword, setPersistence, browserLocalPersistence } = await import('firebase/auth');
+        const { auth } = await getFirebaseInstance();
+        const { signInWithEmailAndPassword, setPersistence, browserLocalPersistence } = await import('firebase/auth');
 
-		setPersistence(auth, browserLocalPersistence)
-			.then((() => {
-				return signInWithEmailAndPassword(auth, email, password);
-			})).catch((error: any) => {
-				const errorCode = error.code;
-				const errorMessage = error.message;
-				console.log(errorCode, errorMessage);
-			});
-	} catch (error) {
-		console.error(error);
-	}
+        await setPersistence(auth, browserLocalPersistence);
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        return userCredential; // Devuelve el resultado para manejar en el frontend
+    } catch (error) {
+        console.error("Login error", error);
+        return null;
+    }
 };
 
 export const getDiscoverCards = async () => {

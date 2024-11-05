@@ -16,7 +16,8 @@ import ClubsCard, { AttributeClubsCard } from '../../components/clubsCard/clubsC
 import { dataClubs } from '../../data/dataClubs';
 import '../../components/logoutButton/logoutButton'; 
 import { appState, dispatch } from '../../store';
-import { getUserNameAction } from '../../store/actions';
+import { getUserNameAction, navigate, setUserCredentials } from '../../store/actions';
+import { Screens } from '../../types/store';
 
 class Dashboard extends HTMLElement {
     user: UserInfo[] = [];
@@ -48,6 +49,10 @@ class Dashboard extends HTMLElement {
         // } else {
         //     this.render();
         // }
+        const user = localStorage.getItem('user');
+    if (!user) {
+        dispatch(navigate(Screens.LOGIN));
+    }
         this.render();
     }
 
