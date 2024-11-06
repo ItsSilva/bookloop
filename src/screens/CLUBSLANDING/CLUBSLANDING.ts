@@ -37,6 +37,7 @@ class ClubsLanding extends HTMLElement {
     }
 
     async connectedCallback() {
+        console.log('Clubs', appState.cards);
         try {
             if (!appState.cards || appState.cards.length === 0) {
                 const action = await getDiscoverCardsAction();
@@ -48,6 +49,7 @@ class ClubsLanding extends HTMLElement {
         } catch (error) {
             console.error("Error loading clubs:", error);
         }
+        this.render()
     }
 
     async renderUserClubs(container: HTMLElement) {
@@ -147,6 +149,9 @@ class ClubsLanding extends HTMLElement {
     render() {
         if (this.shadowRoot) {
             this.shadowRoot.innerHTML = '';
+
+            console.log('Clubs', appState.cards);
+
             
             const link = document.createElement('link');
             link.rel = 'stylesheet';
@@ -207,12 +212,12 @@ class ClubsLanding extends HTMLElement {
                 clubsCard1.setAttribute('buttoncolor', '#6471C7');
                 clubsContainer.appendChild(clubsCard1);
 
-                // const clubsCard2 = this.ownerDocument.createElement('clubs-card') as ClubsCard;
-                // clubsCard2.setAttribute('cardtitle', 'Discover');
-                // clubsCard2.setAttribute('buttontext', 'Discover now');
-                // clubsCard2.setAttribute('cardcolor', '#C2BE4D');
-                // clubsCard2.setAttribute('buttoncolor', '#C2BE4D');
-                // clubsContainer.appendChild(clubsCard2);
+                const clubsCard2 = this.ownerDocument.createElement('clubs-card') as ClubsCard;
+                clubsCard2.setAttribute('cardtitle', 'Discover');
+                clubsCard2.setAttribute('buttontext', 'Discover now');
+                clubsCard2.setAttribute('cardcolor', '#C2BE4D');
+                clubsCard2.setAttribute('buttoncolor', '#C2BE4D');
+                clubsContainer.appendChild(clubsCard2);
             }
 
             container.appendChild(clubsContainer);
