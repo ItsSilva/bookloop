@@ -46,6 +46,16 @@
     padding: 0 1.5rem 0 1.5rem;
 }
 
+.clubs-container div{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background-color: #F9F5F3;
+    border-radius: 10px;
+    width: 100%;
+    padding: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
 
 @media (max-width: 500px) {
     .user-container {
