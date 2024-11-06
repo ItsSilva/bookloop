@@ -35,6 +35,8 @@ class DiscoverLandingCards extends HTMLElement {
         this.name = '';
         this.members = '';
         this.button = '';
+        
+        
     }
 
     connectedCallback() {
@@ -70,10 +72,11 @@ class DiscoverLandingCards extends HTMLElement {
             card.appendChild(members);
 
             const button = this.ownerDocument.createElement('button');
+            button.textContent = this.button || 'Remove';
+            console.log('btn', this.button);
             button.className = 'button';
             
-            if (this.button === 'Join') {
-                button.textContent = 'Remove';
+            if (this.button === 'Remove') {
                 button.style.backgroundColor = '#ff4444';
                 button.addEventListener('click', async (e) => {
                     e.preventDefault();
@@ -90,18 +93,18 @@ class DiscoverLandingCards extends HTMLElement {
                         if (success) {
                             // the card will be deleted when the status is updated
                             console.log("Successfully removed from clubs");
+
                         } else {
                             button.disabled = false;
-                            button.textContent = 'Remove';
+                            button.textContent = 'Add';
+
                         }
                     } catch (error) {
                         console.error("Error removing from clubs:", error);
                         button.disabled = false;
-                        button.textContent = 'Remove';
                     }
                 });
             } else {
-                button.textContent = 'Join';
                 button.addEventListener('click', async (e) => {
                     e.preventDefault();
                     if (!this.uid) {
@@ -115,17 +118,15 @@ class DiscoverLandingCards extends HTMLElement {
                     try {
                         const success = await this.addToClubsLanding();
                         if (success) {
-                            button.textContent = 'Joined';
+                            button.textContent = 'Remove';
                             button.style.backgroundColor = '#808080';
                             button.disabled = true;
                         } else {
                             button.disabled = false;
-                            button.textContent = 'Join';
                         }
                     } catch (error) {
                         console.error("Error adding to clubs:", error);
                         button.disabled = false;
-                        button.textContent = 'Join';
                     }
                 });
             }
