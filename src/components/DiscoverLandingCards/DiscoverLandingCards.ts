@@ -72,7 +72,7 @@ class DiscoverLandingCards extends HTMLElement {
             const button = this.ownerDocument.createElement('button');
             button.className = 'button';
             
-            if (this.button === 'Joined') {
+            if (this.button === 'Join') {
                 button.textContent = 'Remove';
                 button.style.backgroundColor = '#ff4444';
                 button.addEventListener('click', async (e) => {
