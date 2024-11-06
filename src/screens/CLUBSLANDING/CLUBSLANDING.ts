@@ -87,7 +87,7 @@ class ClubsLanding extends HTMLElement {
                 clubCard.setAttribute(AttributeDiscoverLandingCards.image, club.image);
                 clubCard.setAttribute(AttributeDiscoverLandingCards.name, club.name);
                 clubCard.setAttribute(AttributeDiscoverLandingCards.members, club.members);
-                clubCard.setAttribute(AttributeDiscoverLandingCards.button, 'Join');
+                clubCard.setAttribute(AttributeDiscoverLandingCards.button, 'Remove');
                 
                 // Apply styles to the button
                 const button = clubCard.shadowRoot?.querySelector('.button') as HTMLButtonElement;
