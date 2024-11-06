@@ -58,8 +58,12 @@ class DiscoverLanding extends HTMLElement {
         }
     
         container.innerHTML = '';
+
+        const userClubs = appState.cards.filter((club: any) => 
+            club.usersid && Array.isArray(club.usersid) && !club.usersid.includes(appState.user)
+        );
     
-        appState.cards.forEach((card: any) => {
+        userClubs.forEach((card: any) => {
             const discoverCard = this.ownerDocument.createElement('discover-landing-card') as DiscoverLandingCards;
             
             if (card.id || card.uid) {
@@ -74,9 +78,9 @@ class DiscoverLanding extends HTMLElement {
             discoverCard.setAttribute(AttributeDiscoverLandingCards.members, card.members || '');
     
             // Check if the current user is already a member
-            const isUserMember = card.usersid && Array.isArray(card.usersid) && card.usersid.includes(userId);
+       
             
-            discoverCard.setAttribute(AttributeDiscoverLandingCards.button, isUserMember ? 'Joined' : 'Join');
+            discoverCard.setAttribute(AttributeDiscoverLandingCards.button, 'Join' );
     
             container.appendChild(discoverCard);
         });
