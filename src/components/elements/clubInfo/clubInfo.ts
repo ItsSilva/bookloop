@@ -40,32 +40,6 @@ export class clubInfo extends HTMLElement {
         this.render();
     }
 
-    async addToClubsLanding() {
-        if (this.uid) {
-            try {
-                await addClubForUser(this.uid);
-                return true;
-            } catch (error) {
-                console.error("Error adding club:", error);
-                return false;
-            }
-        }
-        return false;
-    }
-
-    async removeFromClubs() {
-        if (this.uid) {
-            try {
-                await removeClubForUser(this.uid);
-                return true;
-            } catch (error) {
-                console.error("Error removing club:", error);
-                return false;
-            }
-        }
-        return false;
-    }
-
     render() {
         if (this.shadowRoot) {
             this.shadowRoot.innerHTML = '';
@@ -102,10 +76,10 @@ export class clubInfo extends HTMLElement {
 
             // Crear y configurar el botón
             const button = this.ownerDocument.createElement('button');
+            button.textContent = this.button || 'Join';
             button.className = 'clubs--info__button';
             
-            if (this.button === 'Joined') {
-                button.textContent = 'Remove';
+            if (this.button === 'Remove') {
                 button.style.backgroundColor = '#ff4444';
                 button.addEventListener('click', async (e) => {
                     e.preventDefault();
@@ -123,16 +97,14 @@ export class clubInfo extends HTMLElement {
                             console.log("Successfully removed from clubs");
                         } else {
                             button.disabled = false;
-                            button.textContent = 'Remove';
+                            button.textContent = 'Add';
                         }
                     } catch (error) {
                         console.error("Error removing from clubs:", error);
                         button.disabled = false;
-                        button.textContent = 'Remove';
                     }
                 });
             } else {
-                button.textContent = 'Join';
                 button.addEventListener('click', async (e) => {
                     e.preventDefault();
                     if (!this.uid) {
@@ -146,17 +118,15 @@ export class clubInfo extends HTMLElement {
                     try {
                         const success = await this.addToClubsLanding();
                         if (success) {
-                            button.textContent = 'Joined';
+                            button.textContent = 'Remove';
                             button.style.backgroundColor = '#808080';
                             button.disabled = true;
                         } else {
                             button.disabled = false;
-                            button.textContent = 'Join';
                         }
                     } catch (error) {
                         console.error("Error adding to clubs:", error);
                         button.disabled = false;
-                        button.textContent = 'Join';
                     }
                 });
             }
@@ -164,6 +134,67 @@ export class clubInfo extends HTMLElement {
             section.appendChild(textDiv);
             section.appendChild(button);
             this.shadowRoot.appendChild(section);
+        }
+    }
+
+        async addToClubsLanding() {
+        try {
+            const userId = appState.user;
+            console.log("Current userId:", userId);
+    
+            if (!userId) {
+                console.error("No user ID found in appState");
+                return false;
+            }
+    
+            if (!this.uid) {
+                console.error("No uid found for card");
+                return false;
+            }
+    
+            const clubData = {
+                uid: this.uid,
+                image: this.image || '',
+                name: this.name || '',
+                members: this.members || '',
+            };
+    
+            console.log("Attempting to add club with data:", clubData);
+            const success = await addClubForUser(clubData);
+            return success;
+    
+        } catch (error) {
+            console.error("Error in addToClubsLanding:", error);
+            return false;
+        }
+    }
+
+    async removeFromClubs() {
+        try {
+            const userId = appState.user;
+            console.log("Current userId:", userId);
+    
+            if (!userId) {
+                console.error("No user ID found in appState");
+                return false;
+            }
+    
+            if (!this.uid) {
+                console.error("No uid found for card");
+                return false;
+            }
+    
+            const clubData = {
+                uid: this.uid,
+            };
+    
+            console.log("Attempting to remove club with data:", clubData);
+            const success = await removeClubForUser(clubData);
+            return success;
+    
+        } catch (error) {
+            console.error("Error in removeFromClubs:", error);
+            return false;
         }
     }
 }
