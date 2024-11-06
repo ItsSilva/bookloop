@@ -83,24 +83,58 @@ class Dashboard extends HTMLElement {
                 return;
             }
 
+            const clubsTitle = this.ownerDocument.createElement('div');
+            clubsTitle.className = 'clubs-title';
+            clubsTitle.style.backgroundColor = '#F9F5F3';
+            clubsTitle.style.borderRadius = '12px';
+            clubsTitle.style.padding = '2rem';
+            clubsTitle.style.width = '100%';
+            clubsTitle.style.height = '35px';
+            clubsTitle.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.2)';
+            clubsTitle.style.marginBottom = '20px';
+            clubsTitle.style.alignItems = 'center';
+            clubsTitle.style.display = 'flex';
+
+            const clubsTitleText = this.ownerDocument.createElement('h3');
+            clubsTitleText.textContent = 'Clubs';
+            clubsTitleText.style.color = 'rgb(100, 113, 199)';
+            clubsTitle.appendChild(clubsTitleText);
+
+
+            const clubsContainer = this.ownerDocument.createElement('div');
+            clubsContainer.className = 'clubs-container';
+            clubsContainer.style.display = 'flex';
+            clubsContainer.style.flexDirection = 'column';
+            clubsContainer.style.gap = '1rem';
+            clubsContainer.style.backgroundColor = '#F9F5F3';
+            clubsContainer.style.borderRadius = '10px';
+            clubsContainer.style.width = '100%';
+            clubsContainer.style.padding = '1rem';
+            clubsContainer.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.2)';
+
             userClubs.forEach((club: any) => {
-                const clubCard = this.ownerDocument.createElement('club-info') as clubInfo;
-                clubCard.setAttribute(AttributeClubInfo.uid, String(club.uid));
-                clubCard.setAttribute(AttributeClubInfo.image, club.image);
-                clubCard.setAttribute(AttributeClubInfo.name, club.name);
-                clubCard.setAttribute(AttributeClubInfo.members, club.members);
-                clubCard.setAttribute(AttributeClubInfo.button, 'Joined');
+                const clubCard = this.ownerDocument.createElement('div');
+                clubCard.className = 'club-card';
+
+                const clubInfoElement = this.ownerDocument.createElement('club-info') as clubInfo;
+                clubInfoElement.setAttribute(AttributeClubInfo.uid, String(club.uid));
+                clubInfoElement.setAttribute(AttributeClubInfo.image, club.image);
+                clubInfoElement.setAttribute(AttributeClubInfo.name, club.name);
+                clubInfoElement.setAttribute(AttributeClubInfo.members, club.members);
+                clubInfoElement.setAttribute(AttributeClubInfo.button, 'Joined');
                 
                 // Apply styles to the button
-                const button = clubCard.shadowRoot?.querySelector('.button') as HTMLButtonElement;
+                const button = clubInfoElement.shadowRoot?.querySelector('.button') as HTMLButtonElement;
                 if (button) {
                     button.disabled = true;
                     button.style.backgroundColor = '#808080';
                 }
-                
-                clubCard.classList.add('user-club-card');
-                container.appendChild(clubCard);
+
+                clubCard.appendChild(clubInfoElement);
+                clubsContainer.appendChild(clubCard);
             });
+            container.appendChild(clubsTitle);
+            container.appendChild(clubsContainer);
 
         } catch (error) {
             console.error("Error rendering user clubs:", error);
