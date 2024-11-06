@@ -97,7 +97,7 @@ export class clubInfo extends HTMLElement {
 
             // Crear y configurar el párrafo de miembros
             const members = this.ownerDocument.createElement('p');
-            members.textContent = `${this.members || '0'} Club members`;
+            members.textContent = `${this.members || '0'}`;
             textDiv.appendChild(members);
 
             // Crear y configurar el botón
