@@ -90,8 +90,13 @@ class ClubsCardDiscover extends HTMLElement {
           // Create the club list
           const clubList = this.ownerDocument.createElement('div');
           clubList.className = 'club-list';
+
+          const userClubs = appState.cards.filter((club: any) => 
+            club.usersid && Array.isArray(club.usersid) && !club.usersid.includes(appState.user)
+        );
         
-          appState.cards.forEach(club => {
+        
+        userClubs.forEach(club => {
             const clubContainer = this.ownerDocument.createElement('div');
             clubContainer.className = 'club-info-container';
       
