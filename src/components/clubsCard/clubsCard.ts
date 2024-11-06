@@ -16,10 +16,9 @@ class ClubsCard extends HTMLElement {
     cardcolor: string = 'black';
     buttoncolor: string = 'gray';
 
-    constructor(clubsData: any[]) {
+    constructor() {
         super();
         this.attachShadow({ mode: 'open' });
-        this.clubs = clubsData;
         addObserver(this);
     }
 
@@ -67,58 +66,58 @@ class ClubsCard extends HTMLElement {
 
     render() {
         if (this.shadowRoot) {
-            this.shadowRoot.innerHTML = '';
-
-            // Crear y añadir el link de estilos
-            const styleLink = document.createElement('link');
-            styleLink.rel = 'stylesheet';
-            styleLink.href = '../src/components/clubsCard/clubsCard.css';
-            this.shadowRoot.appendChild(styleLink);
-
-            // Crear la sección principal
-            const section = this.ownerDocument.createElement('section');
-
-            // Crear el div de la tarjeta con el título
-            const cardDiv = this.ownerDocument.createElement('div');
-            cardDiv.className = 'card';
-
-            const title = this.ownerDocument.createElement('h3');
-            title.style.color = this.cardcolor;
-            title.textContent = this.cardtitle || 'Default Title';
-            cardDiv.appendChild(title);
-            section.appendChild(cardDiv);
-
-            // Crear la lista de clubs
-            const clubList = this.ownerDocument.createElement('div');
-            clubList.className = 'club-list';
-
-            // Crear y añadir cada club
-            this.clubs.forEach(club => {
-                const clubContainer = this.ownerDocument.createElement('div');
-                clubContainer.className = 'club-info-container';
-
-                const clubInfo = this.ownerDocument.createElement('club-info');
-                clubInfo.setAttribute('uid', club.uid || '');
-                clubInfo.setAttribute('image', club.image);
-                clubInfo.setAttribute('name', club.name);
-                clubInfo.setAttribute('members', club.members.toString());
-                clubInfo.setAttribute('button', club.button || '');
-                clubContainer.appendChild(clubInfo);
-
-                clubList.appendChild(clubContainer);
-            });
-
-            // Crear el botón principal
-            const mainButton = this.ownerDocument.createElement('button');
-            mainButton.style.backgroundColor = this.buttoncolor;
-            mainButton.textContent = this.buttontext || 'Default Button';
-            mainButton.className = 'main-button';
-            clubList.appendChild(mainButton);
-
-            section.appendChild(clubList);
-            this.shadowRoot.appendChild(section);
+          this.shadowRoot.innerHTML = '';
+      
+          // Create and append the style link
+          const styleLink = document.createElement('link');
+          styleLink.rel = 'stylesheet';
+          styleLink.href = '../src/components/clubsCard/clubsCard.css';
+          this.shadowRoot.appendChild(styleLink);
+      
+          // Create the main section
+          const section = this.ownerDocument.createElement('section');
+      
+          // Create the card div with the title
+          const cardDiv = this.ownerDocument.createElement('div');
+          cardDiv.className = 'card';
+      
+          const title = this.ownerDocument.createElement('h3');
+          title.style.color = this.cardcolor;
+          title.textContent = this.cardtitle || 'Default Title';
+          cardDiv.appendChild(title);
+          section.appendChild(cardDiv);
+      
+          // Create the club list
+          const clubList = this.ownerDocument.createElement('div');
+          clubList.className = 'club-list';
+      
+          // Create and add each club
+          this.clubs.forEach(club => {
+            const clubContainer = this.ownerDocument.createElement('div');
+            clubContainer.className = 'club-info-container';
+      
+            const clubInfo = this.ownerDocument.createElement('club-info');
+            clubInfo.setAttribute('uid', club.uid || '');
+            clubInfo.setAttribute('image', club.image || 'placeholder.jpg'); // Use a placeholder image if club.image is empty
+            clubInfo.setAttribute('name', club.name);
+            clubInfo.setAttribute('members', club.members.toString());
+            clubInfo.setAttribute('button', club.button || '');
+            clubContainer.appendChild(clubInfo);
+      
+            clubList.appendChild(clubContainer);
+          });
+      
+          // Create the main button
+          const mainButton = this.ownerDocument.createElement('button');
+          mainButton.style.backgroundColor = this.buttoncolor;
+          mainButton.textContent = this.buttontext || 'Default Button';
+          mainButton.className = 'main-button';
+          clubList.appendChild(mainButton);
+      
+          section.appendChild(clubList);
+          this.shadowRoot.appendChild(section);
         }
-    }
+      }
 }
 
 customElements.define('clubs-card', ClubsCard);
