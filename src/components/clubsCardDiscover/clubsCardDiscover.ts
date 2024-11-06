@@ -1,0 +1,123 @@
+import '../../components/elements/clubInfo/clubInfo';
+import { dispatch, addObserver, appState } from '../../store/index';
+import { getClubsAction } from '../../store/actions';
+
+export enum AttributeClubsCardDiscover {
+    'cardtitle' = 'cardtitle',
+    'buttontext' = 'buttontext',
+    'cardcolor' = 'cardcolor',
+    'buttoncolor' = 'buttoncolor',
+}
+
+class ClubsCardDiscover extends HTMLElement {
+    clubs: any[] = [];
+    cardtitle: string = '';
+    buttontext: string = '';
+    cardcolor: string = 'black';
+    buttoncolor: string = 'gray';
+
+    constructor() {
+        super();
+        this.attachShadow({ mode: 'open' });
+        addObserver(this);
+    }
+
+    static get observedAttributes() {
+        return Object.values(AttributeClubsCardDiscover);
+    }
+
+    attributeChangedCallback(propName: AttributeClubsCardDiscover, oldValue: string | null, newValue: string | null) {
+        if (newValue) {
+            switch(propName) {
+                case AttributeClubsCardDiscover.cardtitle:
+                    this.cardtitle = newValue;
+                    break;
+                case AttributeClubsCardDiscover.buttontext:
+                    this.buttontext = newValue;
+                    break;
+                case AttributeClubsCardDiscover.cardcolor:
+                    this.cardcolor = newValue;
+                    break;
+                case AttributeClubsCardDiscover.buttoncolor:
+                    this.buttoncolor = newValue;
+                    break;
+            }
+            this.render();
+        }
+    }
+
+    async connectedCallback() {
+        try {
+            if (appState.cards.length === 0) {
+                const action = await getClubsAction();
+                if (action) {
+                    dispatch(action);
+                    this.clubs = appState.cards;
+                    this.render();
+                }
+            } else {
+                this.clubs = appState.cards;
+                this.render();
+            }
+        } catch (error) {
+            console.error("Error loading clubs:", error);
+        }
+    }
+
+    render() {
+        if (this.shadowRoot) {
+          this.shadowRoot.innerHTML = '';
+      
+          // Create and append the style link
+          const styleLink = document.createElement('link');
+          styleLink.rel = 'stylesheet';
+          styleLink.href = '../src/components/clubsCardDiscover/clubsCardDiscover.css';
+          this.shadowRoot.appendChild(styleLink);
+      
+          // Create the main section
+          const section = this.ownerDocument.createElement('section');
+      
+          // Create the card div with the title
+          const cardDiv = this.ownerDocument.createElement('div');
+          cardDiv.className = 'card';
+      
+          const title = this.ownerDocument.createElement('h3');
+          title.style.color = this.cardcolor;
+          title.textContent = this.cardtitle || 'Default Title';
+          cardDiv.appendChild(title);
+          section.appendChild(cardDiv);
+      
+          // Create the club list
+          const clubList = this.ownerDocument.createElement('div');
+          clubList.className = 'club-list';
+        
+          appState.cards.forEach(club => {
+            const clubContainer = this.ownerDocument.createElement('div');
+            clubContainer.className = 'club-info-container';
+      
+            const clubInfo = this.ownerDocument.createElement('club-info');
+            clubInfo.setAttribute('uid', club.uid || '');
+            clubInfo.setAttribute('image', club.image || 'placeholder.jpg'); // Use a placeholder image if club.image is empty
+            clubInfo.setAttribute('name', club.name);
+            clubInfo.setAttribute('members', club.members.toString());
+            clubInfo.setAttribute('button', club.button || '');
+            clubContainer.appendChild(clubInfo);
+      
+            clubList.appendChild(clubContainer);
+          });
+      
+          // Create the main button
+          const mainButton = this.ownerDocument.createElement('button');
+          mainButton.style.backgroundColor = this.buttoncolor;
+          mainButton.textContent = this.buttontext || 'Default Button';
+          mainButton.className = 'main-button';
+          clubList.appendChild(mainButton);
+      
+          section.appendChild(clubList);
+          this.shadowRoot.appendChild(section);
+        }
+      }
+}
+
+customElements.define('clubs-card-discover', ClubsCardDiscover);
+export default ClubsCardDiscover;
