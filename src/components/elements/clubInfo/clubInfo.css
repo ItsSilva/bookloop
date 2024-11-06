@@ -35,3 +35,16 @@
     top: -20px;
     color: #53413a;
 }
+.clubs--info__button {
+    background-color: rgb(255, 68, 68);
+    color: #F9F5F3;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    margin: 0 0 0 16px;
+    display: block;
+    min-width: 100px;
+    transition: background-color 0.3s ease;
+}
