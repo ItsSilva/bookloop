@@ -100,7 +100,7 @@ class ClubsCardDiscover extends HTMLElement {
             clubInfo.setAttribute('image', club.image || 'placeholder.jpg'); // Use a placeholder image if club.image is empty
             clubInfo.setAttribute('name', club.name);
             clubInfo.setAttribute('members', club.members.toString());
-            clubInfo.setAttribute('button', club.button || '');
+            clubInfo.setAttribute('button', 'Join');
             clubContainer.appendChild(clubInfo);
       
             clubList.appendChild(clubContainer);
