@@ -8,6 +8,8 @@ import '../../components/postPopUp/postPopUp';
 import '../../components/elements/clubInfo/clubInfo';
 import '../../components/clubsCard/clubsCard';
 import ClubsCard, { AttributeClubsCard } from '../../components/clubsCard/clubsCard';
+import '../../components/clubsCardDiscover/clubsCardDiscover';
+import ClubsCardDiscover, { AttributeClubsCardDiscover } from '../../components/clubsCardDiscover/clubsCardDiscover';
 import { dataClubs } from '../../data/dataClubs';
 import '../../components/DiscoverLandingCards/DiscoverLandingCards';
 import DiscoverLandingCards, { AttributeDiscoverLandingCards } from '../../components/DiscoverLandingCards/DiscoverLandingCards';
@@ -212,7 +214,7 @@ class ClubsLanding extends HTMLElement {
                 clubsCard1.setAttribute('buttoncolor', '#6471C7');
                 clubsContainer.appendChild(clubsCard1);
 
-                const clubsCard2 = this.ownerDocument.createElement('clubs-card') as ClubsCard;
+                const clubsCard2 = this.ownerDocument.createElement('clubs-card-discover') as ClubsCardDiscover;
                 clubsCard2.setAttribute('cardtitle', 'Discover');
                 clubsCard2.setAttribute('buttontext', 'Discover now');
                 clubsCard2.setAttribute('cardcolor', '#C2BE4D');
