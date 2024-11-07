@@ -9,6 +9,8 @@ import PostPopUp, { Attribute3 } from '../../components/postPopUp/postPopUp';
 import '../../components/elements/clubInfo/clubInfo';
 import '../../components/clubsCard/clubsCard';
 import ClubsCard, { AttributeClubsCard } from '../../components/clubsCard/clubsCard';
+import '../../components/clubsCardDiscover/clubsCardDiscover';
+import ClubsCardDiscover, { AttributeClubsCardDiscover } from '../../components/clubsCardDiscover/clubsCardDiscover';
 import { dataClubs } from '../../data/dataClubs';
 import '../../components/DiscoverLandingCards/DiscoverLandingCards';
 import DiscoverLandingCards, { AttributeDiscoverLandingCards } from '../../components/DiscoverLandingCards/DiscoverLandingCards';
@@ -61,26 +63,23 @@ class DiscoverLanding extends HTMLElement {
             club.usersid && Array.isArray(club.usersid) && !club.usersid.includes(appState.user)
         );
     
-        userClubs.forEach((card: any) => {
-            const discoverCard = this.ownerDocument.createElement('discover-landing-card') as DiscoverLandingCards;
+        userClubs.forEach((club: any) => {
+            const clubCard = this.ownerDocument.createElement('discover-landing-card') as DiscoverLandingCards;
+            clubCard.setAttribute(AttributeDiscoverLandingCards.uid, String(club.uid));
+            clubCard.setAttribute(AttributeDiscoverLandingCards.image, club.image);
+            clubCard.setAttribute(AttributeDiscoverLandingCards.name, club.name);
+            clubCard.setAttribute(AttributeDiscoverLandingCards.members, club.members);
+            clubCard.setAttribute(AttributeDiscoverLandingCards.button, 'Remove');
             
-            if (card.id || card.uid) {
-                discoverCard.setAttribute(AttributeDiscoverLandingCards.uid, String(card.id || card.uid));
-            } else {
-                console.error("Card has no uid or id:", card);
-                return;
+            // Apply styles to the button
+            const button = clubCard.shadowRoot?.querySelector('.button') as HTMLButtonElement;
+            if (button) {
+                button.disabled = true;
+                button.style.backgroundColor = '#808080';
             }
             
-            discoverCard.setAttribute(AttributeDiscoverLandingCards.image, card.image || '');
-            discoverCard.setAttribute(AttributeDiscoverLandingCards.name, card.name || '');
-            discoverCard.setAttribute(AttributeDiscoverLandingCards.members, card.members || '');
-    
-            // Check if the current user is already a member
-       
-            
-            discoverCard.setAttribute(AttributeDiscoverLandingCards.button, 'Join' );
-    
-            container.appendChild(discoverCard);
+            clubCard.classList.add('user-club-card');
+            container.appendChild(clubCard);
         });
     }
 
@@ -148,7 +147,7 @@ class DiscoverLanding extends HTMLElement {
                 clubsCard1.setAttribute('buttoncolor', '#6471C7');
                 clubsContainer.appendChild(clubsCard1);
 
-                const clubsCard2 = this.ownerDocument.createElement('clubs-card') as ClubsCard;
+                const clubsCard2 = this.ownerDocument.createElement('clubs-card-discover') as ClubsCardDiscover;
                 clubsCard2.setAttribute('cardtitle', 'Discover');
                 clubsCard2.setAttribute('buttontext', 'Discover now');
                 clubsCard2.setAttribute('cardcolor', '#C2BE4D');
