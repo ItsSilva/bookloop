@@ -25,7 +25,7 @@
 }
 
 .clubs--info__text h4 {
-    color: #5c4339;
+    color: var(--banner-bg-color, #b4b13d);
     position: relative;
     top: 20px;
 }
