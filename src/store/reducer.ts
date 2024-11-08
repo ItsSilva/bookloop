@@ -29,16 +29,14 @@ export const reducer = (currentAction: any, currentState: any) => {
 					cards: payload,
 				};
 
+				case Actions.GETPUBLICATIONS:
+					return {
+						...currentState,
+						posts: payload,
+							};
 		default:
 			return currentState;
 			
 			
-			case Actions.GETPUBLICATIONS:
-						const publications = payload.filter((post: any) => !post.userUID);
-						console.log("POSTS", Post);
-						return {
-							...currentState,
-							publications,
-						};
 	}
 };
