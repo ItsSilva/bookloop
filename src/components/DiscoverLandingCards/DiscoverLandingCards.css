@@ -38,7 +38,7 @@
 }
 
 .name {
-    color: #b4b13d;
+    color: var(--banner-bg-color, #b4b13d);
     font-size: 1.2rem;
     margin: 12px 16px 8px;
     font-weight: 600;
