@@ -16,6 +16,9 @@ import ClubsCard, { AttributeClubsCard } from '../../components/clubsCard/clubsC
 import { dataClubs } from '../../data/dataClubs';
 import '../../components/logoutButton/logoutButton';
 import { getFirebaseInstance } from '../../utils/firebase'; 
+import { getPostsAction } from "../../store/actions";
+import { getPostsByUser, getUser } from "../../utils/firebase";
+import { appState, dispatch } from '../../store';
 
 class Dashboard extends HTMLElement {
     user: UserInfo[] = [];
@@ -28,6 +31,9 @@ class Dashboard extends HTMLElement {
         this.attachShadow({ mode: 'open' });
 
         this.currentUserPic = dataUsers[0].userpic;
+
+        
+        
 
         dataUsers.forEach(dataUser => {
             const userCard = this.ownerDocument.createElement('user-info') as UserInfo;
@@ -46,6 +52,14 @@ class Dashboard extends HTMLElement {
         this.render();
         // Escuchar el evento personalizado emitido por NavBar
         this.addEventListener('toggle-user-container', () => this.toggleUserContainer());
+
+        if(appState.publications.length === 0 && appState.publications.length === 0){
+            const action = await getPostsAction();
+            dispatch(action);
+        } else {
+            this.render();
+        }
+
 
     }
 
@@ -84,7 +98,7 @@ class Dashboard extends HTMLElement {
         }
     }
 
-    render() {
+   async render() {
         if (this.shadowRoot) {
             const navBar = this.ownerDocument.createElement('nav-bar');
             navBar.setAttribute('icon', "../src/assets/logos/big_logo.png");
@@ -129,6 +143,12 @@ class Dashboard extends HTMLElement {
             container.appendChild(postContainer);
 
             // Posts & pop up
+
+           // const currentUser = await getUser(appState.user);
+           // const userPosts = appState.normalPosts.filter((post: any) => post.userUID === appState.user);
+
+
+
             const postDashboard = this.ownerDocument.createElement('section');
             postDashboard.className = 'post-dashboard';
 
