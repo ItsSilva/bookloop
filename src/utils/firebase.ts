@@ -68,6 +68,7 @@ export const savePost = async (caption: string, file?: any) => {
 		userId: user.uid,
 		comments: [],
 		imageUrl,
+		likes: 0,
 		// userName: appState.userData.username,
 		name: appState.userData.name,
 	  };
