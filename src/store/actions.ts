@@ -1,6 +1,6 @@
 import { dispatch } from '../store';
 import { Actions, Screens } from '../types/store';
-import { getPublications, getDiscoverCards, getClubsCards, addClubsCards, getUserName, removeClubsCards } from '../utils/firebase';
+import { getDiscoverCards, getClubsCards, addClubsCards, getUserName, removeClubsCards, getPosts } from '../utils/firebase';
 
 export const navigate = (screen: Screens) => {
 	return {
@@ -9,13 +9,6 @@ export const navigate = (screen: Screens) => {
 	};
 };
 
-export const getProductsAction = async () => {
-	const products = await getPublications();
-	return {
-		action: Actions.GETPUBLICATIONS,
-		payload: products,
-	};
-};
 
 export const setUserCredentials = (user: string) => {
 	return {
@@ -101,10 +94,12 @@ export const getUserNameAction = async () => {
 };
 
 export const getPostsAction = async () => {
-    const data = await getPublications();
+    const posts = await getPosts();
+    console.log('trayendo post in action', posts);
+    
     
     return {
-        action: Actions.GETPUBLICATIONS,
-        payload: data,
+        action: Actions.GETPOSTS,
+        payload: posts,
     }
 };
