@@ -30,3 +30,13 @@ export const getDiscoverCardsAction = async () => {
 		payload: cards,
 	};
 };
+
+export const getPostsAction = async () => {
+    const data = await getPublications();
+    console.log("DATA", data);
+    
+    return {
+        action: Actions.GETPUBLICATIONS,
+        payload: data,
+    }
+};
