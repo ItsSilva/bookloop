@@ -42,6 +42,14 @@
     padding: 0 1.5rem 0 1.5rem;
 }
 
+.discover-card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 1.5rem 0 1.5rem 0;
+    justify-content: flex-start;
+}
+
 
 @media (max-width: 500px) {
     .user-container {
