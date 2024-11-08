@@ -86,6 +86,7 @@ class ClubsLanding extends HTMLElement {
                 clubCard.setAttribute(AttributeDiscoverLandingCards.uid, String(club.uid));
                 clubCard.setAttribute(AttributeDiscoverLandingCards.image, club.image);
                 clubCard.setAttribute(AttributeDiscoverLandingCards.name, club.name);
+                clubCard.setAttribute('bg-color', '#6471c7');
                 clubCard.setAttribute(AttributeDiscoverLandingCards.members, club.members);
                 clubCard.setAttribute(AttributeDiscoverLandingCards.button, 'Remove');
                 
