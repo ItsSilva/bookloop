@@ -69,6 +69,11 @@ export class clubInfo extends HTMLElement {
             title.textContent = this.name || 'No name found';
             textDiv.appendChild(title);
 
+            const bgColor = this.getAttribute('bg-color');
+            if (bgColor) {
+                title.style.setProperty('--banner-bg-color', bgColor);
+            }
+
             // Crear y configurar el párrafo de miembros
             const members = this.ownerDocument.createElement('p');
             members.textContent = `${this.members || '0'}`;
