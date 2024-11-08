@@ -148,6 +148,8 @@ class Dashboard extends HTMLElement {
             userContainer.appendChild(userMenu);
             container.appendChild(userContainer);
 
+         
+
             const postContainer = this.ownerDocument.createElement('section');
             postContainer.className = 'post-container';
 
@@ -217,6 +219,16 @@ class Dashboard extends HTMLElement {
             this.shadowRoot.appendChild(container);
         }
     }
+
+    handleLogout() {
+        // Limpia el estado del usuario en appState o realiza la acción de logout
+        appState.user = {}; 
+        dispatch({ type: 'LOGOUT' }); 
+    
+        // Redirigir al usuario a la pantalla de login o la página principal
+        window.location.href = '/login'; 
+    }
+
 }
 
 customElements.define('app-dashboard', Dashboard);
