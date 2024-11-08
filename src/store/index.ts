@@ -12,6 +12,8 @@ const onAuth = async () => {
 		if (user){
 			user.uid !== null ? dispatch(setUserCredentials(user.uid)) : '';
 			dispatch(navigate(Screens.DASHBOARD));
+			console.log('user data', appState.userData);
+			
 		}else{
 			dispatch(navigate(Screens.LOGIN));
 		};
@@ -23,6 +25,12 @@ onAuth();
 const initialState: AppState = {
 	screen: 'LOGIN',
 	posts: [],
+	userData: {
+		username: '',
+		uid: '',
+		email: '',
+		name: '',
+	},
 	user: {},
 	cards: [],
 	clubs: [],
