@@ -62,6 +62,9 @@ export const savePost = async (caption: string, file?: any) => {
 		imageUrl = await getDownloadURL(storageRef);
 	  }
 
+	  console.log('Appstate userData:', appState.userData);
+	  
+
 	  const newPost = {
 		caption,
 		timestamp: new Date(),
@@ -170,8 +173,6 @@ export const getDiscoverCards = async () => {
 	}
 };
 
-// Note: the missing functions to create are found in the video of the last class
-
 export const addClubsCards = async (clubData: any) => {
     try {
         const { db } = await getFirebaseInstance();
@@ -243,7 +244,6 @@ export const getClubsCards = async () => {
     }
 };
 
-
 export const getUserName = async () => {
 	try {
 		const { db } = await getFirebaseInstance();
@@ -298,7 +298,6 @@ export const removeClubsCards = async (clubData: any) => {
     }
 };
 
-
 export const getUser = async (uid: string) => {
 	const { db, auth } = await getFirebaseInstance();
 	const {  doc, getDoc } = await import('firebase/firestore');
@@ -315,4 +314,39 @@ export const getPostsByUser = async (uid: string) => {
 	const filtered = posts?.filter((post: any) => post.userUID === uid);
 
 	return filtered;
+};
+
+export const addLikes = async (uid: string, liked: boolean) => {
+    try {
+        const { db } = await getFirebaseInstance();
+        const { doc, updateDoc, arrayUnion, arrayRemove } = await import('firebase/firestore');
+
+        const userId = appState.user;
+        console.log("Current userId:", userId);
+
+        if (!userId) {
+            throw new Error("No user ID found in appState");
+        }
+
+        // Reference to the specific document in posts collection
+        const postRef = doc(db, 'posts', uid);
+
+        // Update the likes array based on the liked state
+        if (liked) {
+            await updateDoc(postRef, {
+                likes: arrayUnion(userId)
+            });
+        } else {
+            await updateDoc(postRef, {
+                likes: arrayRemove(userId)
+            });
+        }
+
+        console.log("Likes updated successfully");
+        return true;
+
+    } catch (error) {
+        console.error("Error in addLikes:", error);
+        throw error;
+    }
 };
