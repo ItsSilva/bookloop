@@ -61,11 +61,17 @@ class DiscoverLandingCards extends HTMLElement {
             image.alt = this.name || 'No name found';
             card.appendChild(image);
 
+
             const name = this.ownerDocument.createElement('h2');
             name.className = 'name';
             name.textContent = this.name || 'No name found';
             card.appendChild(name);
-
+            
+            const bgColor = this.getAttribute('bg-color');
+            if (bgColor) {
+                name.style.setProperty('--banner-bg-color', bgColor);
+            }
+            
             const members = this.ownerDocument.createElement('p');
             members.className = 'members';
             members.textContent = this.members || 'No members found';
