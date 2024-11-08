@@ -1,7 +1,6 @@
-import { browserLocalPersistence } from 'firebase/auth';
-
 let db: any;
 let auth: any;
+let storage : any;
 
 export const getFirebaseInstance = async () => {
 	if (!db) {
@@ -9,6 +8,7 @@ export const getFirebaseInstance = async () => {
 		const { getFirestore } = await import('firebase/firestore');
 		const { initializeApp } = await import('firebase/app');
 		const { getAuth } = await import('firebase/auth');
+		const { getStorage } = await import('firebase/storage');
 
 		// Your web app's Firebase configuration
 		//IMPORTANT: delete the firebaseConfig when you push to a public repository
@@ -17,8 +17,9 @@ export const getFirebaseInstance = async () => {
 		const app = initializeApp(firebaseConfig);
 		db = getFirestore(app);
 		auth = getAuth(app);
+		storage = getStorage(app)
 	}
-	return { db, auth };
+	return { db, auth, storage };
 };
 
 export const addPublications = async (product: any) => {
@@ -34,12 +35,46 @@ export const addPublications = async (product: any) => {
 	}
 };
 
+export const savePost = async (caption: string, file?: any) => {
+	try {
+	  const { db, auth, storage } = await getFirebaseInstance();
+	  const user = auth.currentUser;
+  
+	  if (!user) {
+		throw new Error('Usuario no autenticado');
+	  }
+  
+	  const { collection, addDoc } = await import('firebase/firestore');
+	  const userPostsCollection = collection(db, `users/${user.uid}/posts`);
+	  let imageUrl = null;
+  
+	  // Subir la imagen a Firebase Storage si existe
+	  if (file) {
+		const { ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
+		const storageRef = ref(storage, `images/${user.uid}/${file.name}`);
+		await uploadBytes(storageRef, file);
+		imageUrl = await getDownloadURL(storageRef);
+	  }
+  
+	  // Guardar la quote y la URL de la imagen en Firestore en la subcolección 'posts'
+	  await addDoc(userPostsCollection, {
+		caption,
+		imageUrl,
+		timestamp: new Date()
+	  });
+  
+	  console.log('Post guardado exitosamente en la subcolección posts');
+	} catch (error) {
+	  console.error('Error al guardar el post:', error);
+	}
+  };
+
 export const getPublications = async () => {
 	try {
 		const { db } = await getFirebaseInstance();
 		const { collection, getDocs } = await import('firebase/firestore');
 
-		const where = collection(db, 'publications');
+		const where = collection(db, 'posts');
 		const querySnapshot = await getDocs(where);
 		const data: any[] = [];
 
@@ -110,4 +145,24 @@ export const getDiscoverCards = async () => {
 	} catch (error) {
 		console.error('Error getting documents', error);
 	}
+};
+
+
+
+export const getUser = async (uid: string) => {
+	const { db, auth } = await getFirebaseInstance();
+	const {  doc, getDoc } = await import('firebase/firestore');
+	
+	const ref = doc(db, 'users', uid);
+	const querySnapshot = await getDoc(ref);
+
+	return querySnapshot.data();
+};
+
+export const getPostsByUser = async (uid: string) => {
+	const posts = await getPublications();
+
+	const filtered = posts?.filter((post: any) => post.userUID === uid);
+
+	return filtered;
 };
