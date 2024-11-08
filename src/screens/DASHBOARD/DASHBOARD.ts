@@ -14,7 +14,8 @@ import '../../components/elements/clubInfo/clubInfo';
 import '../../components/clubsCard/clubsCard';
 import ClubsCard, { AttributeClubsCard } from '../../components/clubsCard/clubsCard';
 import { dataClubs } from '../../data/dataClubs';
-import '../../components/logoutButton/logoutButton'; 
+import '../../components/logoutButton/logoutButton';
+import { getFirebaseInstance } from '../../utils/firebase'; 
 
 class Dashboard extends HTMLElement {
     user: UserInfo[] = [];
@@ -38,10 +39,28 @@ class Dashboard extends HTMLElement {
         });
     }
 
-    connectedCallback() {
+    async connectedCallback() {
+        
+        await this.displayCurrentUserUID();
+
         this.render();
         // Escuchar el evento personalizado emitido por NavBar
         this.addEventListener('toggle-user-container', () => this.toggleUserContainer());
+
+    }
+
+    async displayCurrentUserUID() {
+        try {
+            const { auth } = await getFirebaseInstance();
+            const user = auth.currentUser;
+            if (user) {
+                console.log("UID del usuario autenticado:", user.uid);
+            } else {
+                console.log("No hay un usuario autenticado.");
+            }
+        } catch (error) {
+            console.error("Error al obtener el UID del usuario:", error);
+        }
     }
 
     toggleUserContainer() {
