@@ -22,7 +22,7 @@ onAuth();
 
 const initialState: AppState = {
 	screen: 'LOGIN',
-	publications: [],
+	posts: [],
 	user: {},
 	cards: [],
 	clubs: [],
