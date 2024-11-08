@@ -17,6 +17,14 @@ export const setUserCredentials = (user: string) => {
 	};
 };
 
+export const setUserData = (user: any) => {
+	return {
+		action: Actions.SETUSERDATA,
+		payload: user,
+	};
+};
+
+
 export const getDiscoverCardsAction = async () => {
 	const cards = await getDiscoverCards();
 	return {
