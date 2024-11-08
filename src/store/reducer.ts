@@ -16,6 +16,11 @@ export const reducer = (currentAction: any, currentState: any) => {
 				...currentState,
 				user: payload,
 			};
+		case Actions.SETUSERDATA:
+			return {
+				...currentState,
+				userData: payload,
+			};
 
 		case Actions.GETDISCOVERCARDSACTION:
 			return {
