@@ -22,7 +22,7 @@ import '../../components/elements/clubInfo/clubInfo';
 import { appState, dispatch, addObserver } from '../../store';
 import DiscoverLandingCards, { AttributeDiscoverLandingCards } from '../../components/DiscoverLandingCards/DiscoverLandingCards';
 import Banner, { AttributeBanner } from '../../components/banner/banner';
-import { getUserNameAction, navigate, setUserCredentials, getDiscoverCardsAction, getClubsAction} from '../../store/actions';
+import { getDiscoverCardsAction, getPostsAction} from '../../store/actions';
 import { Screens } from '../../types/store';
 
 class Dashboard extends HTMLElement {
@@ -55,12 +55,60 @@ class Dashboard extends HTMLElement {
                 dispatch(action);
             }
         }
+
+        console.log('Dashboard cards', appState.cards.length);
+        console.log('Dashboard post', appState.posts.length);
+
+        
+
+        if (appState.posts.length != 0) {
+            
+                }else {
+                console.log('Dashboard quantity', appState.posts.length);
+            
+        const action = await getPostsAction();
+        dispatch(action);
+        console.log('post in appstate', appState.posts);
+                
+
+        }
+
+                
         this.render();
     }
 
     async renderDiscoverCards(container: HTMLElement) {
         if (!appState.cards || !Array.isArray(appState.cards)) {
             console.log("No discover cards available");
+            return;
+        }
+    }
+
+    async renderGetPostsAction(container: HTMLElement) {
+        try {
+            const userId = appState.user;
+            
+            if (!userId) {
+                console.error("No user ID found in appState");
+                return;
+            }
+
+            container.innerHTML = '';
+
+            appState.posts.forEach((dataPost: any) => {
+                const post = this.ownerDocument.createElement('post-component') as Post;
+                post.setAttribute(Attribute2.clubpic, dataPost.clubpic);
+                post.setAttribute(Attribute2.clubname, dataPost.clubname);
+                post.setAttribute(Attribute2.image, dataPost.imageUrl);
+                post.setAttribute(Attribute2.likes, dataPost.likes);
+                post.setAttribute(Attribute2.comments, dataPost.comments);
+                post.setAttribute(Attribute2.author, dataPost.author);
+                post.setAttribute(Attribute2.desc, dataPost.desc);
+                container.appendChild(post);
+            });
+
+        } catch (error) {
+            console.error("Error rendering post-component:", error);
             return;
         }
     }
@@ -119,26 +167,27 @@ class Dashboard extends HTMLElement {
             const postDashboard = this.ownerDocument.createElement('section');
             postDashboard.className = 'post-dashboard';
 
-            if (dataPosts && Array.isArray(dataPosts)) {
-                dataPosts.forEach(dataPost => {
-                    const post = this.ownerDocument.createElement('post-component') as Post;
+            // if (dataPosts && Array.isArray(dataPosts)) {
+            //     dataPosts.forEach(dataPost => {
+            //         const post = this.ownerDocument.createElement('post-component') as Post;
 
-                    post.setAttribute('clubpic', dataPost.clubpic);
-                    post.setAttribute('clubname', dataPost.clubname);
-                    post.setAttribute('image', dataPost.image);
-                    post.setAttribute('likes', dataPost.likes.toString());
-                    post.setAttribute('comments', dataPost.comments.toString());
-                    post.setAttribute('author', dataPost.author);
-                    post.setAttribute('desc', dataPost.desc);
+            //         post.setAttribute('clubpic', dataPost.clubpic);
+            //         post.setAttribute('clubname', dataPost.clubname);
+            //         post.setAttribute('image', dataPost.image);
+            //         post.setAttribute('likes', dataPost.likes.toString());
+            //         post.setAttribute('comments', dataPost.comments.toString());
+            //         post.setAttribute('author', dataPost.author);
+            //         post.setAttribute('desc', dataPost.desc);
 
-                    postDashboard.appendChild(post);
-                    this.post.push(post);
-                });
-            } else {
-                console.error('dataPosts is not an array or is undefined');
-            }
+            //         postDashboard.appendChild(post);
+            //         this.post.push(post);
+            //     });
+            // } else {
+            //     console.error('dataPosts is not an array or is undefined');
+            // }
 
             postContainer.appendChild(postDashboard);
+            this.renderGetPostsAction(postDashboard);
 
             const clubsContainer = this.ownerDocument.createElement('section');
             clubsContainer.className = 'clubs-container';
