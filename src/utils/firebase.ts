@@ -3,6 +3,7 @@ import { appState, dispatch } from '../store/index';
 import { addDoc, collection, doc, getDocs, getFirestore } from 'firebase/firestore';
 import { navigate, setUserCredentials, setUserData } from '../store/actions';
 import { Screens } from '../types/store';
+import {  updateDoc, arrayUnion } from 'firebase/firestore';
 let db: any;
 let auth: any;
 let storage : any;
@@ -26,6 +27,20 @@ export const getFirebaseInstance = async () => {
 	}
 	return { db, auth, storage };
 };
+
+
+export const logOut = async () => {
+	const { auth } = await getFirebaseInstance();
+	const { signOut } = await import('firebase/auth');
+  
+	try {
+	  await signOut(auth); 
+	  console.log("Usuario deslogueado exitosamente");
+	} catch (error) {
+	  console.error("Error al cerrar sesión:", error);
+	}
+  };
+
 
 export const addPublications = async (product: any) => {
 	try {
@@ -100,6 +115,20 @@ export const getPosts = async () => {
 
 	return arrayProducts;
 };
+
+export const addComment = async (postId: string, comment: string) => {
+    const postRef = doc(db, 'posts', postId);
+    try {
+        await updateDoc(postRef, {
+            comments: arrayUnion(comment)
+        });
+    } catch (error) {
+        console.error("Error adding comment:", error);
+    }
+};
+
+
+
 
 export const registerUser = async (credentials: any) => {
 	try {
