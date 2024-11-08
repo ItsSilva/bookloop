@@ -17,6 +17,7 @@ export enum Screens {
 	'CLUBSMAIN' = 'CLUBSMAIN',
 	'DISCOVERLANDING' = 'DISCOVERLANDING',
 	'DISCOVERMAIN' = 'DISCOVERMAIN',
+	'LANDING' = 'LANDING',
 }
 
 export enum Actions {

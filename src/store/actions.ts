@@ -100,3 +100,11 @@ export const getUserNameAction = async () => {
 		payload: user,
 	};
 };
+export const getPostsAction = async () => {
+    const data = await getPublications();
+    
+    return {
+        action: Actions.GETPUBLICATIONS,
+        payload: data,
+    }
+};

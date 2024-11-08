@@ -1,3 +1,4 @@
+import { Post } from '../components';
 import { Actions } from '../types/store';
 
 export const reducer = (currentAction: any, currentState: any) => {
@@ -41,7 +42,14 @@ export const reducer = (currentAction: any, currentState: any) => {
 				user: payload,
 			};
 
+				case Actions.GETPUBLICATIONS:
+					return {
+						...currentState,
+						posts: payload,
+							};
 		default:
 			return currentState;
+			
+			
 	}
 };

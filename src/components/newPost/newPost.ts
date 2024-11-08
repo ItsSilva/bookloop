@@ -1,3 +1,5 @@
+import { savePost } from "../../utils/firebase";
+
 export enum Attribute {
     userpic = 'userpic',
     text = 'text',
@@ -41,6 +43,35 @@ class NewPost extends HTMLElement {
         this.addFloatingButtonListener();
         this.handleResize();
         window.addEventListener('resize', () => this.handleResize());
+
+    }
+
+    async handleSubmit() {
+        const postInput = this.shadowRoot?.querySelector('.post-input') as HTMLInputElement;
+        const fileInput = this.shadowRoot?.querySelector('.file-input') as HTMLInputElement;
+
+        const caption = postInput.value
+        const file = fileInput.files ? fileInput.files[0] : null;
+
+
+        if (!caption && !file || fileInput.files?.length === 0) {
+            alert('Please add caption or image')
+            return
+        }
+
+        try {
+            await savePost(caption, file);
+            console.log('Post saved');
+            
+        } catch (error) {
+            console.error("Error al publicar:", error);
+        }
+
+        postInput.value = '';
+        if (fileInput) {
+            fileInput.value = ''
+        }
+
     }
 
     handleResize() {
@@ -57,6 +88,7 @@ class NewPost extends HTMLElement {
         const imageButton = this.shadowRoot?.querySelector('.button-images') as HTMLButtonElement;
         const inputText = this.shadowRoot?.querySelector('.input-wrapper-inputtext') as HTMLElement;
         const inputImage = this.shadowRoot?.querySelector('.input-wrapper-inputimage') as HTMLElement;
+        const submitBtn = this.shadowRoot?.querySelector('.submit-btn') as HTMLElement;
 
         textButton?.addEventListener('click', () => {
             inputText?.classList.remove('hidden');
@@ -69,6 +101,12 @@ class NewPost extends HTMLElement {
             inputImage?.classList.remove('hidden');
             this.updateButtonStyles(imageButton, textButton);
         });
+
+        submitBtn?.addEventListener('click', (e: Event) => {
+            e.preventDefault();
+            this.handleSubmit();
+        })
+
     }
 
     updateButtonStyles(selectedButton: HTMLButtonElement | null, unselectedButton: HTMLButtonElement | null) {
@@ -88,7 +126,7 @@ class NewPost extends HTMLElement {
         if (textButton) {
             this.updateButtonStyles(textButton, null);
             inputText?.classList.remove('hidden');
-            inputImage?.classList.add('hidden'); 
+            inputImage?.classList.add('hidden');
         }
     }
 
@@ -138,7 +176,7 @@ class NewPost extends HTMLElement {
                 <div class='container-inputs'>
                     <div class="input-wrapper-inputtext">
                         <i class="fa-solid fa-message" style="color: #999;"></i>
-                        <input type="text" placeholder="${this.inputtext || 'No input'}" name="textInput">
+                        <input class="post-input" type="text" placeholder="${this.inputtext || 'No input'}" name="textInput">
                     </div>
                     <label class="input-wrapper-inputimage hidden">
                         <i class="fa-solid fa-cloud-arrow-up" style="color: #999;"></i>
@@ -148,7 +186,7 @@ class NewPost extends HTMLElement {
                 </div>
                 <div class='container-buttons-post'>
                     <button type="button">${this.club || 'No Club'}<i class="fa-solid fa-users" style="color: #F9F5F3;"></i></button>
-                    <button type="submit">${this.post || 'No Post'}</button>
+                    <button class="submit-btn" type="submit">${this.post || 'No Post'}</button>
                 </div>
             </form>
             <div class="floating-button">
