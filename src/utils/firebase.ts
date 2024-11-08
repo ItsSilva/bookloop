@@ -103,56 +103,64 @@ export const getPosts = async () => {
 
 export const registerUser = async (credentials: any) => {
 	try {
-		const { auth, db } = await getFirebaseInstance();
-		const { createUserWithEmailAndPassword } = await import('firebase/auth');
-		const { doc, setDoc } = await import('firebase/firestore');
-
-		const userCredential = await createUserWithEmailAndPassword(auth, credentials.email, credentials.password);
-
-		const where = doc(db, 'users', userCredential.user.uid);
-		const data = {
-			userName: credentials.userName,
-			name: credentials.name,
-		};
-
-		await setDoc(where, data);
-		return true;
+	  const { auth, db } = await getFirebaseInstance();
+	  const { createUserWithEmailAndPassword } = await import('firebase/auth');
+	  const { doc, setDoc } = await import('firebase/firestore');
+  
+	  const userCredential = await createUserWithEmailAndPassword(auth, credentials.email, credentials.password);
+  
+	  const userRef = doc(db, 'users', userCredential.user.uid);
+	  const userData = {
+		userName: credentials.userName,
+		name: credentials.name,
+		uid: userCredential.user.uid,
+		email: userCredential.user.email,
+	  };
+  
+	  await setDoc(userRef, userData);
+  
+	  // Update application status with user information
+	  dispatch(setUserData(userData));
+  
+	  return true;
 	} catch (error) {
-		console.error(error);
-		return false;
+	  console.error(error);
+	  return false;
 	}
-};
+  };
 
-export const loginUser = async (email: string, password: string) => {
+  export const loginUser = async (email: string, password: string) => {
 	try {
-		const { doc, getDoc } = await import('firebase/firestore');
-        const { auth } = await getFirebaseInstance();
-        const { signInWithEmailAndPassword, setPersistence, browserLocalPersistence } = await import('firebase/auth');
-
-        await setPersistence(auth, browserLocalPersistence);
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-		const userRef = doc(db, 'users', auth.currentUser.uid);
-		const userDoc = await getDoc(userRef);
-
-		if (userDoc.exists()) {
-			const userData = userDoc.data();
-			const user = {
-				uid: userCredential.user.uid,
-				email: userCredential.user.email,
-				userName: userData.userName,
-				name: userData.name,
-			};
-			dispatch(setUserData(user));
-			console.log('Usuario log', appState.userData);
-			
-        return userCredential; // Devuelve el resultado para manejar en el frontend
-    
-
-}} catch (error) {
-	console.error("Login error", error);
-	return null;
-}
-}
+	  const { doc, getDoc } = await import('firebase/firestore');
+	  const { auth } = await getFirebaseInstance();
+	  const { signInWithEmailAndPassword, setPersistence, browserLocalPersistence } = await import('firebase/auth');
+  
+	  await setPersistence(auth, browserLocalPersistence);
+	  const userCredential = await signInWithEmailAndPassword(auth, email, password);
+  
+	  const userRef = doc(db, 'users', auth.currentUser.uid);
+	  const userDoc = await getDoc(userRef);
+  
+	  if (userDoc.exists()) {
+		const userData = userDoc.data();
+		const user = {
+		  uid: userData.uid,
+		  email: userData.email,
+		  userName: userData.userName,
+		  name: userData.name,
+		};
+  
+		// Actualizar el estado de la aplicación con la información del usuario
+		dispatch(setUserData(user));
+		console.log('Usuario log', appState.userData);
+  
+		return userCredential; // Devuelve el resultado para manejar en el frontend
+	  }
+	} catch (error) {
+	  console.error("Login error", error);
+	  return null;
+	}
+  };
 
 export const getDiscoverCards = async () => {
 	try {
