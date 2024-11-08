@@ -35,6 +35,13 @@ export const reducer = (currentAction: any, currentState: any) => {
 				isFetched: true,
 			};
 
+			case Actions.ADDLIKES:
+				return {
+					...currentState,
+					post: payload,
+					isFetched: true,
+				};
+
 		case Actions.GETUSERNAME:
 			return {
 				...currentState,
