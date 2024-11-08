@@ -1,0 +1,21 @@
+.logout-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    color: rgb(94, 58, 23);
+    position: absolute;
+    font-weight: bolder;
+    top: 100px;
+    right: 40px;
+    transition: background-color 0.5s;
+    padding: 5px;
+    border-radius: 8px;
+    
+}
+
+.logout-button:hover {
+    background-color: rgb(106, 108, 219);
+    color: aliceblue;
+    border-radius: 8px;
+    padding: 5px;
+}

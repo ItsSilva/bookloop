@@ -1,20 +1,30 @@
-import { dispatch, addObserver, appState } from '../../../store/index';
-import { getClubsAction, addClubForUser, removeClubForUser } from '../../../store/actions';
+import { dispatch, addObserver, appState } from '../../store/index';
+import { getClubsAction, addClubForUser, removeClubForUser } from '../../store/actions';
+import { Screens } from '../../types/store';
 
-export enum AttributeClubInfo {
+export enum AttributeDiscoverLandingCards {
     'uid' = 'uid',
     'image' = 'image',
     'name' = 'name',
     'members' = 'members',
     'button' = 'button',
-};
+}
 
-export class clubInfo extends HTMLElement {
+class DiscoverLandingCards extends HTMLElement {
     uid?: string;
     image?: string;
     name?: string;
     members?: string;
     button?: string;
+
+    static get observedAttributes() {
+        return Object.keys(AttributeDiscoverLandingCards) as Array<AttributeDiscoverLandingCards>;
+    }
+
+    attributeChangedCallback(propName: AttributeDiscoverLandingCards, oldValue: string | undefined, newValue: string | undefined) {
+        this[propName] = newValue;
+        this.render();
+    }
 
     constructor() {
         super();
@@ -25,15 +35,8 @@ export class clubInfo extends HTMLElement {
         this.name = '';
         this.members = '';
         this.button = '';
-    }
-
-    static get observedAttributes() {
-        return Object.keys(AttributeClubInfo) as Array<AttributeClubInfo>;
-    }
-
-    attributeChangedCallback(propName: AttributeClubInfo, oldValue: string | undefined, newValue: string | undefined) {
-        this[propName] = newValue;
-        this.render();
+        
+        
     }
 
     connectedCallback() {
@@ -44,52 +47,47 @@ export class clubInfo extends HTMLElement {
         if (this.shadowRoot) {
             this.shadowRoot.innerHTML = '';
 
-            // Crear y añadir el link de estilos
-            const styleLink = document.createElement('link');
-            styleLink.rel = 'stylesheet';
-            styleLink.href = '../src/components/elements/clubInfo/clubInfo.css';
-            this.shadowRoot.appendChild(styleLink);
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = '../src/components/DiscoverLandingCards/DiscoverLandingCards.css';
+            this.shadowRoot.appendChild(link);
 
-            // Crear la sección principal
-            const section = this.ownerDocument.createElement('section');
-            section.className = 'clubs--info';
+            const card = this.ownerDocument.createElement('div');
+            card.className = 'card';
 
-            // Crear y configurar la imagen
             const image = this.ownerDocument.createElement('img');
+            image.className = 'image';
             image.src = this.image || 'No image found';
-            image.alt = 'Club picture';
-            section.appendChild(image);
+            image.alt = this.name || 'No name found';
+            card.appendChild(image);
 
-            // Crear el div para el texto
-            const textDiv = this.ownerDocument.createElement('div');
-            textDiv.className = 'clubs--info__text';
 
-            // Crear y configurar el título
-            const title = this.ownerDocument.createElement('h4');
-            title.textContent = this.name || 'No name found';
-            textDiv.appendChild(title);
-
+            const name = this.ownerDocument.createElement('h2');
+            name.className = 'name';
+            name.textContent = this.name || 'No name found';
+            card.appendChild(name);
+            
             const bgColor = this.getAttribute('bg-color');
             if (bgColor) {
-                title.style.setProperty('--banner-bg-color', bgColor);
+                name.style.setProperty('--banner-bg-color', bgColor);
             }
-
-            // Crear y configurar el párrafo de miembros
+            
             const members = this.ownerDocument.createElement('p');
-            members.textContent = `${this.members || '0'}`;
-            textDiv.appendChild(members);
+            members.className = 'members';
+            members.textContent = this.members || 'No members found';
+            card.appendChild(members);
 
-            // Crear y configurar el botón
             const button = this.ownerDocument.createElement('button');
-            button.textContent = this.button || 'Join';
-            button.className = 'clubs--info__button';
+            button.textContent = this.button || 'Remove';
+            console.log('btn', this.button);
+            button.className = 'button';
             
             if (this.button === 'Remove') {
                 button.style.backgroundColor = '#ff4444';
                 button.addEventListener('click', async (e) => {
                     e.preventDefault();
                     if (!this.uid) {
-                        console.error("No uid found for club");
+                        console.error("No uid found for card");
                         return;
                     }
                     console.log("Remove button clicked for uid:", this.uid);
@@ -99,10 +97,13 @@ export class clubInfo extends HTMLElement {
                     try {
                         const success = await this.removeFromClubs();
                         if (success) {
+                            // the card will be deleted when the status is updated
                             console.log("Successfully removed from clubs");
+
                         } else {
                             button.disabled = false;
                             button.textContent = 'Add';
+
                         }
                     } catch (error) {
                         console.error("Error removing from clubs:", error);
@@ -113,7 +114,7 @@ export class clubInfo extends HTMLElement {
                 button.addEventListener('click', async (e) => {
                     e.preventDefault();
                     if (!this.uid) {
-                        console.error("No uid found for club");
+                        console.error("No uid found for card");
                         return;
                     }
                     console.log("Join button clicked for uid:", this.uid);
@@ -135,14 +136,13 @@ export class clubInfo extends HTMLElement {
                     }
                 });
             }
-
-            section.appendChild(textDiv);
-            section.appendChild(button);
-            this.shadowRoot.appendChild(section);
+            
+            card.appendChild(button);
+            this.shadowRoot.appendChild(card);
         }
     }
 
-        async addToClubsLanding() {
+    async addToClubsLanding() {
         try {
             const userId = appState.user;
             console.log("Current userId:", userId);
@@ -204,5 +204,5 @@ export class clubInfo extends HTMLElement {
     }
 }
 
-customElements.define('club-info', clubInfo);
-export default clubInfo;
+customElements.define('discover-landing-card', DiscoverLandingCards);
+export default DiscoverLandingCards;

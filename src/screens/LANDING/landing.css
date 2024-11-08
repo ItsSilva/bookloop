@@ -1,0 +1,8 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.title-container {
+    background-image: url(src\assets\landing\Group.png);
+}

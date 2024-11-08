@@ -3,14 +3,14 @@ import { dispatch, addObserver, appState } from '../../store/index';
 import { getClubsAction, navigate } from '../../store/actions';
 import { Screens } from '../../types/store';
 
-export enum AttributeClubsCard {
+export enum AttributeClubsCardDiscover {
     'cardtitle' = 'cardtitle',
     'buttontext' = 'buttontext',
     'cardcolor' = 'cardcolor',
     'buttoncolor' = 'buttoncolor',
 }
 
-class ClubsCard extends HTMLElement {
+class ClubsCardDiscover extends HTMLElement {
     clubs: any[] = [];
     cardtitle: string = '';
     buttontext: string = '';
@@ -24,22 +24,22 @@ class ClubsCard extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return Object.values(AttributeClubsCard);
+        return Object.values(AttributeClubsCardDiscover);
     }
 
-    attributeChangedCallback(propName: AttributeClubsCard, oldValue: string | null, newValue: string | null) {
+    attributeChangedCallback(propName: AttributeClubsCardDiscover, oldValue: string | null, newValue: string | null) {
         if (newValue) {
             switch(propName) {
-                case AttributeClubsCard.cardtitle:
+                case AttributeClubsCardDiscover.cardtitle:
                     this.cardtitle = newValue;
                     break;
-                case AttributeClubsCard.buttontext:
+                case AttributeClubsCardDiscover.buttontext:
                     this.buttontext = newValue;
                     break;
-                case AttributeClubsCard.cardcolor:
+                case AttributeClubsCardDiscover.cardcolor:
                     this.cardcolor = newValue;
                     break;
-                case AttributeClubsCard.buttoncolor:
+                case AttributeClubsCardDiscover.buttoncolor:
                     this.buttoncolor = newValue;
                     break;
             }
@@ -65,8 +65,8 @@ class ClubsCard extends HTMLElement {
         }
     }
 
-    navegateToYourClub() {
-        dispatch(navigate(Screens.CLUBSLANDING));
+    navegateToDiscoverNow() {
+        dispatch(navigate(Screens.DISCOVERLANDING));
     }
 
     render() {
@@ -76,7 +76,7 @@ class ClubsCard extends HTMLElement {
           // Create and append the style link
           const styleLink = document.createElement('link');
           styleLink.rel = 'stylesheet';
-          styleLink.href = '../src/components/clubsCard/clubsCard.css';
+          styleLink.href = '../src/components/clubsCardDiscover/clubsCardDiscover.css';
           this.shadowRoot.appendChild(styleLink);
       
           // Create the main section
@@ -95,13 +95,13 @@ class ClubsCard extends HTMLElement {
           // Create the club list
           const clubList = this.ownerDocument.createElement('div');
           clubList.className = 'club-list';
-          
-          // Create and add each club
+
           const userClubs = appState.cards.filter((club: any) => 
-            club.usersid && Array.isArray(club.usersid) && club.usersid.includes(appState.user)
+            club.usersid && Array.isArray(club.usersid) && !club.usersid.includes(appState.user)
         );
         
-          userClubs.forEach(club => {
+        
+        userClubs.forEach(club => {
             const clubContainer = this.ownerDocument.createElement('div');
             clubContainer.className = 'club-info-container';
       
@@ -109,9 +109,8 @@ class ClubsCard extends HTMLElement {
             clubInfo.setAttribute('uid', club.uid || '');
             clubInfo.setAttribute('image', club.image || 'placeholder.jpg'); // Use a placeholder image if club.image is empty
             clubInfo.setAttribute('name', club.name);
-            clubInfo.setAttribute('bg-color', '#6471c7');
             clubInfo.setAttribute('members', club.members.toString());
-            clubInfo.setAttribute('button', 'Remove');
+            clubInfo.setAttribute('button', 'Join');
             clubContainer.appendChild(clubInfo);
       
             clubList.appendChild(clubContainer);
@@ -127,10 +126,10 @@ class ClubsCard extends HTMLElement {
           section.appendChild(clubList);
           this.shadowRoot.appendChild(section);
         }
-        const navegateToYourClub = this.shadowRoot?.querySelector('.main-button');
-        navegateToYourClub?.addEventListener('click', this.navegateToYourClub);
+        const navegateToDiscoverNow = this.shadowRoot?.querySelector('.main-button');
+        navegateToDiscoverNow?.addEventListener('click', this.navegateToDiscoverNow);
       }
 }
 
-customElements.define('clubs-card', ClubsCard);
-export default ClubsCard;
+customElements.define('clubs-card-discover', ClubsCardDiscover);
+export default ClubsCardDiscover;

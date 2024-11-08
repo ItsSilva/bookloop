@@ -24,11 +24,17 @@
     margin-top: 50%;
 }
 
-a {
+button {
     text-decoration: none;
     display: flex;
     align-items: center;
     font-size: 14px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    padding: 0;
 }
 
 i {
@@ -38,15 +44,15 @@ i {
     text-align: center;
 }
 
-.home-element a, .home-element i {
+.home-element button, .home-element i {
     color: #ffc320;
 }
 
-.clubs-element a, .clubs-element i {
+.clubs-element button, .clubs-element i {
     color: #6471c7;
 }
 
-.discover-element a, .discover-element i {
+.discover-element button, .discover-element i {
     color: #c2be4d;
 }
 
@@ -77,15 +83,13 @@ i {
         flex: 1;
     }
 
-    .action-user-element > div > a {
+    .action-user-element > div > button {
         font-size: 0;
         justify-content: center;
     }
 
-    .action-user-element > div > a i{
+    .action-user-element > div > button i {
         color: #F9F5F3 !important;
         font-size: 24px;
     }
-
-    
 }
