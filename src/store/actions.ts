@@ -92,7 +92,6 @@ export const addClubForUser = async (clubData: any) => {
     }
 };
 
-
 export const getUserNameAction = async () => {
 	const user = await getUserName();
 	return {
@@ -100,6 +99,7 @@ export const getUserNameAction = async () => {
 		payload: user,
 	};
 };
+
 export const getPostsAction = async () => {
     const data = await getPublications();
     
