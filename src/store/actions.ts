@@ -33,7 +33,6 @@ export const getDiscoverCardsAction = async () => {
 
 export const getPostsAction = async () => {
     const data = await getPublications();
-    console.log("DATA", data);
     
     return {
         action: Actions.GETPUBLICATIONS,
