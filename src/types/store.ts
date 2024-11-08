@@ -2,7 +2,7 @@ export type Observer = { render: () => void } & HTMLElement;
 
 export type AppState = {
 	screen: string;
-	publications: [];
+	posts: [];
 	user: {};
 	cards: any[],
 	clubs: any[],
@@ -22,10 +22,10 @@ export enum Screens {
 
 export enum Actions {
 	'NAVIGATE' = 'NAVIGATE',
-	'GETPUBLICATIONS' = 'GETPUBLICATIONS',
 	'SETUSERCREDENTIALS' = 'SETUSERCREDENTIALS',
 	'GETDISCOVERCARDSACTION' = 'GETDISCOVERCARDSACTION',
 	'GETCLUBSARDSACTION' = 'GETCLUBSARDSACTION',
 	'ADDCLUBSARDSACTION' = 'ADDCLUBSARDSACTION',
 	'GETUSERNAME' = 'GETUSERNAME',
+	'GETPOSTS' = 'GETPOSTS',
 }
