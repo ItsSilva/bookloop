@@ -10,8 +10,11 @@
 .card {
     position: relative;
     width: 100%;
-    max-width: 320px;
-    min-width: 280px;
+    max-width: 100px;
+    min-width: 200px;
+    height: 60%;
+    max-height: 200px;
+    min-height: 290px;
     background-color: #F9F5F3;
     border-radius: 12px;
     overflow: hidden;
