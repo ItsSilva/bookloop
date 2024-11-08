@@ -132,3 +132,9 @@ export const addLikesAction = async (uid: string, liked: boolean) => {
         return false;
     }
 };
+
+
+export const addCommentAction = (postId: string, comment: string) => ({
+    type: 'ADD_COMMENT',
+    payload: { postId, comment }
+});
