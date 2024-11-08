@@ -3,10 +3,16 @@ export type Observer = { render: () => void } & HTMLElement;
 export type AppState = {
 	screen: string;
 	posts: [];
-	user: {};
+	userData: {
+		username: string;
+		uid: string;
+		email: string;
+		name: string;
+	};
 	cards: any[],
 	clubs: any[],
 	isFetched: boolean;
+	user: {};
 };
 
 export enum Screens {
@@ -23,6 +29,7 @@ export enum Screens {
 export enum Actions {
 	'NAVIGATE' = 'NAVIGATE',
 	'SETUSERCREDENTIALS' = 'SETUSERCREDENTIALS',
+	'SETUSERDATA' = 'SETUSERDATA',
 	'GETDISCOVERCARDSACTION' = 'GETDISCOVERCARDSACTION',
 	'GETCLUBSARDSACTION' = 'GETCLUBSARDSACTION',
 	'ADDCLUBSARDSACTION' = 'ADDCLUBSARDSACTION',
