@@ -29,12 +29,12 @@ export const reducer = (currentAction: any, currentState: any) => {
 				cards: payload,
 			};
 
-			case Actions.GETCLUBSARDSACTION:
-				return {
-					...currentState,
-					clubs: payload,
-					isFetched: true,
-				};			
+		case Actions.GETCLUBSARDSACTION:
+			return {
+				...currentState,
+				clubs: payload,
+				isFetched: true,
+			};
 
 		case Actions.GETUSERNAME:
 			return {
@@ -42,14 +42,14 @@ export const reducer = (currentAction: any, currentState: any) => {
 				user: payload,
 			};
 
-				case Actions.GETPUBLICATIONS:
-					return {
-						...currentState,
-						posts: payload,
-							};
+			case Actions.GETPUBLICATIONS:
+				return {
+					...currentState,
+					publications: payload,
+				};
 		default:
 			return currentState;
-			
-			
+
+
 	}
 };
