@@ -1,6 +1,6 @@
 import { dispatch } from '../store';
 import { Actions, Screens } from '../types/store';
-import { getDiscoverCards, getClubsCards, addClubsCards, getUserName, removeClubsCards, getPosts } from '../utils/firebase';
+import { getDiscoverCards, getClubsCards, addClubsCards, getUserName, removeClubsCards, getPosts, addLikes } from '../utils/firebase';
 
 export const navigate = (screen: Screens) => {
 	return {
@@ -77,12 +77,11 @@ export const addClubForUser = async (clubData: any) => {
         
         if (success) {
             // Get updated clubs after adding
-            const updatedClubs = await getClubsCards();
-            console.log("Updated clubs after adding:", updatedClubs);
+            console.log("Updated clubs after adding:", success);
             
             dispatch({
                 action: Actions.GETCLUBSARDSACTION,
-                payload: updatedClubs,
+                payload: success,
             });
             return true;
         }
@@ -109,5 +108,27 @@ export const getPostsAction = async () => {
     return {
         action: Actions.GETPOSTS,
         payload: posts,
+    }
+};
+
+export const addLikesAction = async (uid: string, liked: boolean) => {
+    try {
+        console.log("Adding user to club:", uid, liked);
+        const success = await addLikes(uid, liked);
+        
+        if (success) {
+            // Get updated clubs after adding
+            console.log("Updated clubs after adding:", success);
+            
+            dispatch({
+                action: Actions.ADDLIKES,
+                payload: success,
+            });
+            return true;
+        }
+        return false;
+    } catch (error) {
+        console.error("Error in addClubForUser:", error);
+        return false;
     }
 };
