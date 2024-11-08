@@ -1,6 +1,7 @@
 import '../../components/elements/clubInfo/clubInfo';
 import { dispatch, addObserver, appState } from '../../store/index';
-import { getClubsAction } from '../../store/actions';
+import { getClubsAction, navigate } from '../../store/actions';
+import { Screens } from '../../types/store';
 
 export enum AttributeClubsCard {
     'cardtitle' = 'cardtitle',
@@ -64,6 +65,10 @@ class ClubsCard extends HTMLElement {
         }
     }
 
+    navegateToYourClub() {
+        dispatch(navigate(Screens.CLUBSLANDING));
+    }
+
     render() {
         if (this.shadowRoot) {
           this.shadowRoot.innerHTML = '';
@@ -121,6 +126,8 @@ class ClubsCard extends HTMLElement {
           section.appendChild(clubList);
           this.shadowRoot.appendChild(section);
         }
+        const navegateToYourClub = this.shadowRoot?.querySelector('.main-button');
+        navegateToYourClub?.addEventListener('click', this.navegateToYourClub);
       }
 }
 
