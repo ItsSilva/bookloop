@@ -4,6 +4,9 @@ import { addLikes } from '../../utils/firebase'
 import { addLikesAction } from '../../store/actions';
 import { dispatch, appState, addObserver } from '../../store';
 
+import { addComment } from '../../utils/firebase';
+import { addCommentAction } from '../../store/actions';
+
 export enum Attribute2 {
     'clubpic' = 'clubpic',
     'clubname' = 'clubname',
@@ -158,14 +161,25 @@ class Post extends HTMLElement {
         const input = this.shadowRoot?.querySelector<HTMLInputElement>('#commentInput');
         const button = this.shadowRoot?.querySelector<HTMLButtonElement>('#sendComment');
 
-        if (input && button) {
-            button.addEventListener('click', () => {
+        if (input && button && this.uid) {
+            button.addEventListener('click', async () => {
                 const commentText = input.value.trim();
                 if (commentText) {
-                    this.usercomments.push(commentText);
-                    this.comments = this.usercomments.length;
-                    this.render();
-                    input.value = '';
+                    try {
+                        // Guardar el comentario en Firebase
+                        await addComment(this.uid, commentText);
+
+                        // Actualizar la lista de comentarios en el componente
+                        this.usercomments.push(commentText);
+                        this.comments = this.usercomments.length;
+                        this.render();
+                        input.value = '';
+
+                        // Despachar acción para actualizar el estado global si es necesario
+                        dispatch(addCommentAction(this.uid, commentText));
+                    } catch (error) {
+                        console.error("Error adding comment:", error);
+                    }
                 }
             });
 
@@ -185,17 +199,19 @@ class Post extends HTMLElement {
                 e.stopPropagation();
 
                 this.toggleLike();
-                this.likes += this.liked ? 1 : -1;
-
+                
                 try {
+                    // Actualiza el like en Firebase
                     await addLikes(this.uid, this.liked);
+                    // Actualiza el estado global
                     dispatch(addLikesAction(this.uid, this.liked));
+                    // Actualiza el conteo local
+                    this.likes += this.liked ? 1 : -1;
                     this.render();
                 } catch (error) {
-                    console.error("Error adding likes:", error);
-                    this.toggleLike(); // Revert like state if there's an error
-                    this.likes += this.liked ? -1 : 1;
-                    this.render();
+                    console.error("Error al añadir like:", error);
+                    // Revertir si hay un error
+                    this.toggleLike();
                 }
             });
         }
@@ -204,7 +220,9 @@ class Post extends HTMLElement {
     toggleLike() {
         this.liked = !this.liked;
     }
-}
+    }
+
+ 
 
 customElements.define('post-component', Post);
 export default Post;
