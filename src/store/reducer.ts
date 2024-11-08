@@ -11,12 +11,6 @@ export const reducer = (currentAction: any, currentState: any) => {
 				screen: payload,
 			};
 
-		case Actions.GETPUBLICATIONS:
-			return {
-				...currentState,
-				products: payload,
-			};
-
 		case Actions.SETUSERCREDENTIALS:
 			return {
 				...currentState,
@@ -42,10 +36,10 @@ export const reducer = (currentAction: any, currentState: any) => {
 				user: payload,
 			};
 
-			case Actions.GETPUBLICATIONS:
+			case Actions.GETPOSTS:
 				return {
 					...currentState,
-					publications: payload,
+					posts: payload,
 				};
 		default:
 			return currentState;
