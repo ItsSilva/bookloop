@@ -24,9 +24,6 @@ import DiscoverLandingCards, { AttributeDiscoverLandingCards } from '../../compo
 import Banner, { AttributeBanner } from '../../components/banner/banner';
 import { getUserNameAction, navigate, setUserCredentials, getDiscoverCardsAction, getClubsAction} from '../../store/actions';
 import { Screens } from '../../types/store';
-import { getFirebaseInstance } from '../../utils/firebase'; 
-import { getPostsAction } from "../../store/actions";
-import { getPostsByUser, getUser } from "../../utils/firebase";
 
 class Dashboard extends HTMLElement {
     user: UserInfo[] = [];
@@ -39,9 +36,6 @@ class Dashboard extends HTMLElement {
         addObserver(this);
 
         this.currentUserPic = dataUsers[0].userpic;
-
-        
-        
 
         dataUsers.forEach(dataUser => {
             const userCard = this.ownerDocument.createElement('user-info') as UserInfo;
@@ -62,34 +56,6 @@ class Dashboard extends HTMLElement {
             }
         }
         this.render();
-        
-        await this.displayCurrentUserUID();
-
-        this.render();
-        // Escuchar el evento personalizado emitido por NavBar
-
-        if(appState.publications.length === 0 && appState.publications.length === 0){
-            const action = await getPostsAction();
-            dispatch(action);
-        } else {
-            this.render();
-        }
-
-
-    }
-
-    async displayCurrentUserUID() {
-        try {
-            const { auth } = await getFirebaseInstance();
-            const user = auth.currentUser;
-            if (user) {
-                console.log("UID del usuario autenticado:", user.uid);
-            } else {
-                console.log("No hay un usuario autenticado.");
-            }
-        } catch (error) {
-            console.error("Error al obtener el UID del usuario:", error);
-        }
     }
 
     async renderDiscoverCards(container: HTMLElement) {
@@ -99,7 +65,7 @@ class Dashboard extends HTMLElement {
         }
     }
 
-   async render() {
+    render() {
         if (this.shadowRoot) {
             this.shadowRoot.innerHTML = '';
 
@@ -150,12 +116,6 @@ class Dashboard extends HTMLElement {
             container.appendChild(postContainer);
 
             // Posts & pop up
-
-           // const currentUser = await getUser(appState.user);
-           // const userPosts = appState.normalPosts.filter((post: any) => post.userUID === appState.user);
-
-
-
             const postDashboard = this.ownerDocument.createElement('section');
             postDashboard.className = 'post-dashboard';
 

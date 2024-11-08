@@ -5,9 +5,7 @@ import './screens/REGISTER/REGISTER';
 import './screens/LOGIN/LOGIN';
 import './screens/DASHBOARD/DASHBOARD';
 import './screens/DISCOVERLANDING/DISCOVERLANDING';
-import './screens/CLUBSLANDING/CLUBSLANDING';
-import './screens/CLUBSMAIN/CLUBSMAIN';
-import './screens/DISCOVERMAIN/DISCOVERMAIN';
+import './screens/CLUBSLANDING/CLUBSLANDING';;
 import './screens/LANDING/landing';
 
 

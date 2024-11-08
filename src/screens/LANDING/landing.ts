@@ -13,29 +13,10 @@ import '../../components/clubsCard/clubsCard';
 import ClubsCard, { AttributeClubsCard } from '../../components/clubsCard/clubsCard';
 import { dataClubs } from '../../data/dataClubs';
 
-class Dashboard extends HTMLElement {
-    user: UserInfo[] = [];
-    post: Post[] = [];
-    currentUserPic: string = '';
-    isUserContainerVisible: boolean = true;
-
-
-
 class Landing extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
-
-        this.currentUserPic = dataUsers[0].userpic;
-
-        dataUsers.forEach(dataUser => {
-            const userCard = this.ownerDocument.createElement('user-info') as UserInfo;
-            userCard.setAttribute('background', dataUser.background);
-            userCard.setAttribute('userpic', dataUser.userpic);
-            userCard.setAttribute('name', dataUser.name);
-            userCard.setAttribute('username', dataUser.username);
-            this.user.push(userCard);
-        });
     }
 
     connectedCallback() {
@@ -93,6 +74,7 @@ class Landing extends HTMLElement {
         }
     }
 }
+
 
 customElements.define('app-landing', Landing);
 export default Landing;
