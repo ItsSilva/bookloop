@@ -35,6 +35,10 @@ class UserMenu extends HTMLElement {
         this.render();
     }
 
+
+
+    
+
     navegateToDashboard() {
         dispatch(navigate(Screens.DASHBOARD));
     }
