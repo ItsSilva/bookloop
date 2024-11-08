@@ -1,6 +1,6 @@
 import { browserLocalPersistence } from 'firebase/auth';
 import { appState, dispatch } from '../store/index';
-import { addDoc } from 'firebase/firestore';
+import { addDoc, collection, getDocs } from 'firebase/firestore';
 import { navigate } from '../store/actions';
 import { Screens } from '../types/store';
 let db: any;
@@ -80,29 +80,19 @@ export const savePost = async (caption: string, file?: any) => {
 	}
   };
 
-export const getPublications = async () => {
-	try {
-		const { db } = await getFirebaseInstance();
-		const user = auth.currentUser;
-  
-		if (!user) {
-		  throw new Error('Usuario no autenticado');
-		}
-		
-		const { collection, getDocs } = await import('firebase/firestore');
+export const getPosts = async () => {
+	const querySnapshot = await getDocs(collection(db, 'posts'));
+	const arrayProducts: any[] = [];
 
-		const where = collection(db, `users/${user.uid}/posts`);
-		const querySnapshot = await getDocs(where);
-		const data: any[] = [];
+	querySnapshot.forEach((doc) => {
+		const data = doc.data() as any;
+		arrayProducts.push({ id: doc.id, ...data });
+	});
 
-		querySnapshot.forEach((doc) => {
-			data.push(doc.data());
-		});
+	console.log('posts en firebase', arrayProducts);
+	
 
-		return data;
-	} catch (error) {
-		console.error('Error getting documents', error);
-	}
+	return arrayProducts;
 };
 
 export const registerUser = async (credentials: any) => {
@@ -300,7 +290,7 @@ export const getUser = async (uid: string) => {
 };
 
 export const getPostsByUser = async (uid: string) => {
-	const posts = await getPublications();
+	const posts = await getPosts();
 
 	const filtered = posts?.filter((post: any) => post.userUID === uid);
 
