@@ -1,7 +1,7 @@
 import { browserLocalPersistence } from 'firebase/auth';
 import { appState, dispatch } from '../store/index';
-import { addDoc, collection, getDocs } from 'firebase/firestore';
-import { navigate } from '../store/actions';
+import { addDoc, collection, doc, getDocs, getFirestore } from 'firebase/firestore';
+import { navigate, setUserCredentials, setUserData } from '../store/actions';
 import { Screens } from '../types/store';
 let db: any;
 let auth: any;
@@ -67,7 +67,9 @@ export const savePost = async (caption: string, file?: any) => {
 		timestamp: new Date(),
 		userId: user.uid,
 		comments: [],
-		imageUrl
+		imageUrl,
+		// userName: appState.userData.username,
+		name: appState.userData.name,
 	  };
   
 
@@ -119,17 +121,34 @@ export const registerUser = async (credentials: any) => {
 
 export const loginUser = async (email: string, password: string) => {
 	try {
+		const { doc, getDoc } = await import('firebase/firestore');
         const { auth } = await getFirebaseInstance();
         const { signInWithEmailAndPassword, setPersistence, browserLocalPersistence } = await import('firebase/auth');
 
         await setPersistence(auth, browserLocalPersistence);
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
+		const userRef = doc(db, 'users', auth.currentUser.uid);
+		const userDoc = await getDoc(userRef);
+
+		if (userDoc.exists()) {
+			const userData = userDoc.data();
+			const user = {
+				uid: userCredential.user.uid,
+				email: userCredential.user.email,
+				userName: userData.userName,
+				name: userData.name,
+			};
+			dispatch(setUserData(user));
+			console.log('Usuario log', appState.userData);
+			
         return userCredential; // Devuelve el resultado para manejar en el frontend
-    } catch (error) {
-        console.error("Login error", error);
-        return null;
-    }
-};
+    
+
+}} catch (error) {
+	console.error("Login error", error);
+	return null;
+}
+}
 
 export const getDiscoverCards = async () => {
 	try {
