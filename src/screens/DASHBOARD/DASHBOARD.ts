@@ -120,7 +120,7 @@ class Dashboard extends HTMLElement {
 
             const link = document.createElement('link');
             link.rel = 'stylesheet';
-            link.href = '../src/screens/DISCOVERLANDING/DISCOVERLANDING.css';
+            link.href = '../src/screens/DASHBOARD/DASHBOARD.css';
             this.shadowRoot.appendChild(link);
 
             const navBar = this.ownerDocument.createElement('nav-bar');
