@@ -44,13 +44,14 @@ export const savePost = async (caption: string, file?: any) => {
 	try {
 	  const { db, auth, storage } = await getFirebaseInstance();
 	  const user = auth.currentUser;
-  
+
+	  
 	  if (!user) {
 		throw new Error('Usuario no autenticado');
 	  }
   
 	  const { collection, addDoc } = await import('firebase/firestore');
-	  const userPostsCollection = collection(db, `users/${user.uid}/posts`);
+	  const userPostsCollection = collection(db, 'posts');
 	  let imageUrl = null;
   
 	  // Subir la imagen a Firebase Storage si existe
@@ -60,13 +61,18 @@ export const savePost = async (caption: string, file?: any) => {
 		await uploadBytes(storageRef, file);
 		imageUrl = await getDownloadURL(storageRef);
 	  }
-  
-	  // Guardar la quote y la URL de la imagen en Firestore en la subcolección 'posts'
-	  await addDoc(userPostsCollection, {
+
+	  const newPost = {
 		caption,
-		imageUrl,
-		timestamp: new Date()
-	  });
+		timestamp: new Date(),
+		userId: user.uid,
+		comments: [],
+		imageUrl
+	  };
+  
+
+	  // Guardar la quote y la URL de la imagen en Firestore en la subcolección 'posts'
+	  await addDoc(userPostsCollection, newPost);
   
 	  console.log('Post guardado exitosamente en la subcolección posts');
 	} catch (error) {
