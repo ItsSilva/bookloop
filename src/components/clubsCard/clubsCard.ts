@@ -109,6 +109,7 @@ class ClubsCard extends HTMLElement {
             clubInfo.setAttribute('uid', club.uid || '');
             clubInfo.setAttribute('image', club.image || 'placeholder.jpg'); // Use a placeholder image if club.image is empty
             clubInfo.setAttribute('name', club.name);
+            clubInfo.setAttribute('bg-color', '#6471c7');
             clubInfo.setAttribute('members', club.members.toString());
             clubInfo.setAttribute('button', 'Remove');
             clubContainer.appendChild(clubInfo);
