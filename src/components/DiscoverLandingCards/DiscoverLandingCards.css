@@ -78,11 +78,14 @@
 
 @media (max-width: 768px) {
     .container {
-        grid-template-columns: 1fr;
+        grid-template-columns: 2fr;
+        justify-content: center;
     }
     
     .card {
-        max-width: 100%;
+        min-width: 200px;
+        max-height: 250px;
+        min-height: 350px;
     }
     
     .image {
