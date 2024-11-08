@@ -77,9 +77,15 @@ export const savePost = async (caption: string, file?: any) => {
 export const getPublications = async () => {
 	try {
 		const { db } = await getFirebaseInstance();
+		const user = auth.currentUser;
+  
+		if (!user) {
+		  throw new Error('Usuario no autenticado');
+		}
+		
 		const { collection, getDocs } = await import('firebase/firestore');
 
-		const where = collection(db, 'posts');
+		const where = collection(db, `users/${user.uid}/posts`);
 		const querySnapshot = await getDocs(where);
 		const data: any[] = [];
 
