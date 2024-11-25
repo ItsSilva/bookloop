@@ -39,15 +39,21 @@ class UserInfo extends HTMLElement {
         this.render();
         this.addEventListeners();
     }
-    
-  addEventListeners (){
-    const logoutButton = this.shadowRoot?.querySelector('.logout-btn');
-    if (logoutButton) {
-        logoutButton.addEventListener('click', () => {
-            logOut();
+
+    addEventListeners() {
+        const goToProfile = this.shadowRoot?.querySelector('.container');
+        goToProfile?.addEventListener('click', () => {
+            dispatch(navigate(Screens.PROFILE));
         });
+
+
+        const logoutButton = this.shadowRoot?.querySelector('.logout-btn');
+        if (logoutButton) {
+            logoutButton.addEventListener('click', () => {
+                logOut();
+            });
+        }
     }
-  }
 
 
     render() {
