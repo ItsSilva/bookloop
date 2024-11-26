@@ -120,7 +120,7 @@ class Profile extends HTMLElement {
 
       const link = document.createElement('link');
       link.rel = 'stylesheet';
-      link.href = '../src/screens/DASHBOARD/DASHBOARD.css';
+      link.href = '../src/screens/PROFILE/PROFILE.css';
       this.shadowRoot.appendChild(link);
 
       const navBar = this.ownerDocument.createElement('nav-bar');
@@ -213,7 +213,7 @@ class Profile extends HTMLElement {
 
       this.renderDiscoverCards(clubsContainer);
 
-      container.appendChild(clubsContainer);
+      userContainer.appendChild(clubsContainer);
 
       this.shadowRoot.appendChild(navBar);
       this.shadowRoot.appendChild(container);
