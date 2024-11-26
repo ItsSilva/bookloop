@@ -81,14 +81,14 @@ class Register extends HTMLElement {
 			pName.addEventListener('change', this.changeName);
 			form.appendChild(pName);
 
-			const pUserName = document.createElement('input');
-			pUserName.placeholder = 'User name';
-			pUserName.className = 'form-input';
-			pUserName.required = true;
-			pUserName.addEventListener('change', this.changeAge);
-			form.appendChild(pUserName);
+			const puserName = document.createElement('input');
+			puserName.placeholder = 'User name';
+			puserName.className = 'form-input';
+			puserName.required = true;
+			puserName.addEventListener('change', this.changeAge);
+			form.appendChild(puserName);
 
-						const pEmail = document.createElement('input');
+			const pEmail = document.createElement('input');
 			pEmail.placeholder = 'Email';
 			pEmail.className = 'form-input';
 			pEmail.required = true;
