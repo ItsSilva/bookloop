@@ -87,7 +87,7 @@ export const savePost = async (caption: string, file?: any) => {
 			comments: [],
 			imageUrl,
 			likes: 0,
-			// userName: appState.userData.username,
+			// userName: appState.userData.userName,
 			name: appState.userData.name,
 		};
 
