@@ -52,9 +52,44 @@ class UserBanner extends HTMLElement {
         });
 
         const logoutButton = this.shadowRoot?.querySelector('.logout-btn');
-        logoutButton?.addEventListener('click', () => {
-            logOut();
+
+        logoutButton?.addEventListener('click', async () => {
+            if (!appState.user || appState.user === null) {
+                // Redirect directly if user is null
+                await clearSiteData();
+                dispatch(navigate(Screens.LOGIN));
+            } else {
+                // Delete site data, log out and redirect
+                await clearSiteData();
+                logOut();
+                dispatch(navigate(Screens.LOGIN));
+            }
         });
+
+        // Additional validation: automatically redirect if user is not logged in
+        if (!appState.user || appState.user === null) {
+            (async () => {
+                await clearSiteData();
+                dispatch(navigate(Screens.LOGIN));
+            })();
+        }
+
+        // Function to clean site data
+        async function clearSiteData() {
+            if ('caches' in window) {
+                const cacheNames = await caches.keys();
+                await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
+            }
+
+            localStorage.clear();
+            sessionStorage.clear();
+
+            document.cookie.split(';').forEach(cookie => {
+                const [name] = cookie.split('=');
+                document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`;
+            });
+        }
+
     }
 
     render() {
