@@ -41,7 +41,7 @@ class UserBanner extends HTMLElement {
     }
 
     addEventListeners() {
-        const goToProfile = this.shadowRoot?.querySelector('.container');
+        const goToProfile = this.shadowRoot?.querySelector('.home-btn');
         goToProfile?.addEventListener('click', () => {
             dispatch(navigate(Screens.DASHBOARD));
         });
@@ -74,6 +74,9 @@ class UserBanner extends HTMLElement {
     </div>
   </div>
   <div class="actions">
+      <button class="home-btn">
+      <i class="fa-solid fa-house"></i>
+    </button>
     <button class="edit-btn">
       <i class="fas fa-edit"></i>
     </button>
