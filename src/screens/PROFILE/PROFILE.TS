@@ -39,14 +39,6 @@ class Profile extends HTMLElement {
 
     this.currentUserPic = dataUsers[0].userpic;
 
-    dataUsers.forEach(dataUser => {
-      const userCard = this.ownerDocument.createElement('user-info') as UserInfo;
-      userCard.setAttribute('background', dataUser.background);
-      userCard.setAttribute('userpic', dataUser.userpic);
-      userCard.setAttribute('name', dataUser.name);
-      userCard.setAttribute('username', dataUser.username);
-      this.user.push(userCard);
-    });
   }
 
   async connectedCallback() {
