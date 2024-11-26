@@ -7,14 +7,14 @@ export enum AttributeUserInfo {
     'background' = 'background',
     'userpic' = 'userpic',
     'name' = 'name',
-    'username' = 'username',
+    'userName' = 'userName',
 };
 
 class UserBanner extends HTMLElement {
     background?: string;
     userpic?: string;
     name?: string;
-    username?: string;
+    userName?: string;
 
     constructor() {
         super();
@@ -23,7 +23,7 @@ class UserBanner extends HTMLElement {
         this.background = '';
         this.userpic = '';
         this.name = '';
-        this.username = '';
+        this.userName = '';
     }
 
     static get observedAttributes() {
@@ -105,7 +105,7 @@ class UserBanner extends HTMLElement {
     </div>
     <div class="user-details">
       <h2 class="user-name">${this.name}</h2>
-      <p class="user-username">${this.username}</p>
+      <p class="user-userName">${this.userName}</p>
     </div>
   </div>
   <div class="actions">
