@@ -1,36 +1,35 @@
 import { dispatch } from '../store';
 import { Actions, Screens } from '../types/store';
-import { getDiscoverCards, getClubsCards, addClubsCards, getUserName, removeClubsCards, getPosts, addLikes } from '../utils/firebase';
+import { getDiscoverCards, getClubsCards, addClubsCards, getUserName, removeClubsCards, getPosts, addLikes, updateProfile } from '../utils/firebase';
 
 export const navigate = (screen: Screens) => {
-	return {
-		action: Actions.NAVIGATE,
-		payload: screen,
-	};
+    return {
+        action: Actions.NAVIGATE,
+        payload: screen,
+    };
 };
 
 
 export const setUserCredentials = (user: string) => {
-	return {
-		action: Actions.SETUSERCREDENTIALS,
-		payload: user,
-	};
+    return {
+        action: Actions.SETUSERCREDENTIALS,
+        payload: user,
+    };
 };
 
 export const setUserData = (user: any) => {
-	return {
-		action: Actions.SETUSERDATA,
-		payload: user,
-	};
+    return {
+        action: Actions.SETUSERDATA,
+        payload: user,
+    };
 };
 
-
 export const getDiscoverCardsAction = async () => {
-	const cards = await getDiscoverCards();
-	return {
-		action: Actions.GETDISCOVERCARDSACTION,
-		payload: cards,
-	};
+    const cards = await getDiscoverCards();
+    return {
+        action: Actions.GETDISCOVERCARDSACTION,
+        payload: cards,
+    };
 };
 
 export const getClubsAction = async () => {
@@ -51,12 +50,12 @@ export const removeClubForUser = async (clubData: any) => {
     try {
         console.log("Removing user from club:", clubData);
         const success = await removeClubsCards(clubData);
-        
+
         if (success) {
             // Get updated clubs after removing
             const updatedClubs = await getClubsCards();
             console.log("Updated clubs after removal:", updatedClubs);
-            
+
             dispatch({
                 action: Actions.GETCLUBSARDSACTION,
                 payload: updatedClubs,
@@ -74,11 +73,11 @@ export const addClubForUser = async (clubData: any) => {
     try {
         console.log("Adding user to club:", clubData);
         const success = await addClubsCards(clubData);
-        
+
         if (success) {
             // Get updated clubs after adding
             console.log("Updated clubs after adding:", success);
-            
+
             dispatch({
                 action: Actions.GETCLUBSARDSACTION,
                 payload: success,
@@ -93,18 +92,18 @@ export const addClubForUser = async (clubData: any) => {
 };
 
 export const getUserNameAction = async () => {
-	const user = await getUserName();
-	return {
-		action: Actions.GETUSERNAME,
-		payload: user,
-	};
+    const user = await getUserName();
+    return {
+        action: Actions.GETUSERNAME,
+        payload: user,
+    };
 };
 
 export const getPostsAction = async () => {
     const posts = await getPosts();
     console.log('trayendo post in action', posts);
-    
-    
+
+
     return {
         action: Actions.GETPOSTS,
         payload: posts,
@@ -115,11 +114,11 @@ export const addLikesAction = async (uid: string, liked: boolean) => {
     try {
         console.log("Adding user to club:", uid, liked);
         const success = await addLikes(uid, liked);
-        
+
         if (success) {
             // Get updated clubs after adding
             console.log("Updated clubs after adding:", success);
-            
+
             dispatch({
                 action: Actions.ADDLIKES,
                 payload: success,
@@ -133,8 +132,15 @@ export const addLikesAction = async (uid: string, liked: boolean) => {
     }
 };
 
-
 export const addCommentAction = (postId: string, comment: string) => ({
     type: 'ADD_COMMENT',
     payload: { postId, comment }
 });
+
+export const updateProfileAction = async (user: any) => {
+    await updateProfile(user);
+    return {
+        action: Actions.UPDATEPROFILE,
+        payload: user,
+    }
+}
