@@ -125,10 +125,11 @@ class Profile extends HTMLElement {
         // Create UserBanner directly after navBar and before container
         const userBanner = this.ownerDocument.createElement('user-banner') as UserBanner;
         const firstUser = dataUsers[0]; // Assuming you want to use the first user's data
+        const userInSession = appState.userData;
         userBanner.setAttribute('background', firstUser.background);
         userBanner.setAttribute('userpic', firstUser.userpic);
-        userBanner.setAttribute('name', firstUser.name);
-        userBanner.setAttribute('username', firstUser.username);
+        userBanner.setAttribute('name', userInSession.name);
+        userBanner.setAttribute('userName', userInSession.userName);
 
         const container = this.ownerDocument.createElement('section');
         container.className = 'container';
