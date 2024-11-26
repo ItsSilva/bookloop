@@ -22,7 +22,7 @@ class EditProfile extends HTMLElement {
         };
 
         this.changeName = this.changeName.bind(this);
-        this.changeUserName = this.changeUserName.bind(this);
+        this.changeuserName = this.changeuserName.bind(this);
         this.submitForm = this.submitForm.bind(this);
 
         console.log("Estado inicial de appState.userData:", appState.userData);
@@ -44,7 +44,7 @@ class EditProfile extends HTMLElement {
         this.editedProduct.name = input.value;
     }
 
-    changeUserName(e: any) {
+    changeuserName(e: any) {
         const input = e.target as HTMLInputElement;
         this.editedProduct.userName = input.value;
     }
@@ -102,12 +102,12 @@ class EditProfile extends HTMLElement {
             pName.addEventListener('change', this.changeName);
             form.appendChild(pName);
 
-            const pUserName = document.createElement('input');
-            pUserName.placeholder = 'update user name';
-            pUserName.className = 'form-input';
-            pUserName.required = true;
-            pUserName.addEventListener('change', this.changeUserName);
-            form.appendChild(pUserName);
+            const puserName = document.createElement('input');
+            puserName.placeholder = 'update user name';
+            puserName.className = 'form-input';
+            puserName.required = true;
+            puserName.addEventListener('change', this.changeuserName);
+            form.appendChild(puserName);
 
             // Edit button
             const save = document.createElement('button');
