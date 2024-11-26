@@ -89,7 +89,7 @@ class Profile extends HTMLElement {
       container.innerHTML = '';
 
       appState.posts.forEach((dataPost: any) => {
-        console.log("Processing post data:", dataPost);
+        // console.log("Processing post data:", dataPost);
         const post = this.ownerDocument.createElement('post-component') as Post;
         post.setAttribute(Attribute2.clubpic, dataPost.imageUrl);
         post.setAttribute(Attribute2.clubname, dataPost.name);
