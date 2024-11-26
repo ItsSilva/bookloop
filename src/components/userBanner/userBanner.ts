@@ -63,22 +63,28 @@ class UserBanner extends HTMLElement {
         <link rel="stylesheet" href="../src/components/userBanner/userBanner.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <section class="user-banner">
+<div class="container">
   <div class="user-info">
     <div class="user-picture">
       <img src="${this.userpic}" alt="User Picture" />
     </div>
     <div class="user-details">
       <h2 class="user-name">${this.name}</h2>
-      <p class="user-username">@${this.username}</p>
+      <p class="user-username">${this.username}</p>
     </div>
   </div>
   <div class="actions">
-    <button class="edit-profile">Edit Profile</button>
-    <button class="log-out">Log Out</button>
+    <button class="edit-btn">
+      <i class="fas fa-edit"></i>
+    </button>
+    <button class="logout-btn">
+      <i class="fas fa-sign-out-alt"></i>
+    </button>
   </div>
-  <div class="background-image">
-    <img src="${this.background}" alt="Background Image" />
-  </div>
+</div>
+<div class="background-image">
+  <img src="${this.background}" alt="Background Image" />
+</div>
 </section>
         `;
         }
