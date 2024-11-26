@@ -19,6 +19,8 @@ import { dataClubs } from '../../data/dataClubs';
 import '../../components/logoutButton/logoutButton';
 import clubInfo, { AttributeClubInfo } from '../../components/elements/clubInfo/clubInfo';
 import '../../components/elements/clubInfo/clubInfo';
+import UserBanner from '../../components/userBanner/userBanner';
+import '../../components/userBanner/userBanner'
 import { appState, dispatch, addObserver } from '../../store';
 import DiscoverLandingCards, { AttributeDiscoverLandingCards } from '../../components/DiscoverLandingCards/DiscoverLandingCards';
 import Banner, { AttributeBanner } from '../../components/banner/banner';
@@ -70,7 +72,6 @@ class Profile extends HTMLElement {
       dispatch(action);
       console.log('post in appstate', appState.posts);
 
-
     }
 
 
@@ -116,107 +117,98 @@ class Profile extends HTMLElement {
 
   render() {
     if (this.shadowRoot) {
-      this.shadowRoot.innerHTML = '';
+      if (this.shadowRoot) {
+        this.shadowRoot.innerHTML = '';
 
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = '../src/screens/PROFILE/PROFILE.css';
-      this.shadowRoot.appendChild(link);
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = '../src/screens/PROFILE/PROFILE.css';
+        this.shadowRoot.appendChild(link);
 
-      const navBar = this.ownerDocument.createElement('nav-bar');
-      navBar.setAttribute('icon', "../src/assets/logos/big_logo.png");
-      navBar.setAttribute('img', "../src/assets/logos/medium_logo.png");
-      navBar.setAttribute('input', "Search");
+        const navBar = this.ownerDocument.createElement('nav-bar');
+        navBar.setAttribute('icon', "../src/assets/logos/big_logo.png");
+        navBar.setAttribute('img', "../src/assets/logos/medium_logo.png");
+        navBar.setAttribute('input', "Search");
 
-      const container = this.ownerDocument.createElement('section');
-      container.className = 'container';
+        // Create UserBanner directly after navBar and before container
+        const userBanner = this.ownerDocument.createElement('user-banner') as UserBanner;
+        const firstUser = dataUsers[0]; // Assuming you want to use the first user's data
+        userBanner.setAttribute('background', firstUser.background);
+        userBanner.setAttribute('userpic', firstUser.userpic);
+        userBanner.setAttribute('name', firstUser.name);
+        userBanner.setAttribute('username', firstUser.username);
 
-      const userContainer = this.ownerDocument.createElement('section');
-      userContainer.className = 'user-container';
+        const container = this.ownerDocument.createElement('section');
+        container.className = 'container';
 
-      this.user.forEach(userCard => {
-        userContainer.appendChild(userCard);
-      });
+        const userContainer = this.ownerDocument.createElement('section');
+        userContainer.className = 'user-container';
 
-      const userMenu = this.ownerDocument.createElement('user-menu');
-      userMenu.setAttribute('home', '#');
-      userMenu.setAttribute('clubs', '#');
-      userMenu.setAttribute('discover', '#');
-      userMenu.setAttribute('help', '#');
-      userMenu.setAttribute('setting', '#');
+        // Keep the existing user card creation logic
+        this.user.forEach(userCard => {
+          userContainer.appendChild(userCard);
+        });
 
-      userContainer.appendChild(userMenu);
-      container.appendChild(userContainer);
+        const userMenu = this.ownerDocument.createElement('user-menu');
+        userMenu.setAttribute('home', '#');
+        userMenu.setAttribute('clubs', '#');
+        userMenu.setAttribute('discover', '#');
+        userMenu.setAttribute('help', '#');
+        userMenu.setAttribute('setting', '#');
 
+        userContainer.appendChild(userMenu);
+        container.appendChild(userContainer);
 
+        const postContainer = this.ownerDocument.createElement('section');
+        postContainer.className = 'post-container';
 
-      const postContainer = this.ownerDocument.createElement('section');
-      postContainer.className = 'post-container';
+        const newPost = this.ownerDocument.createElement('new-post');
+        newPost.setAttribute('userpic', this.currentUserPic);
+        newPost.setAttribute('text', 'Create new post');
+        newPost.setAttribute('buttontext', 'Text');
+        newPost.setAttribute('buttonimages', 'Images');
+        newPost.setAttribute('inputtext', 'Share something...');
+        newPost.setAttribute('inputimage', 'Drag and drop or upload media');
+        newPost.setAttribute('club', 'Select a Club');
+        newPost.setAttribute('post', 'Post');
 
-      const newPost = this.ownerDocument.createElement('new-post');
-      newPost.setAttribute('userpic', this.currentUserPic);
-      newPost.setAttribute('text', 'Create new post');
-      newPost.setAttribute('buttontext', 'Text');
-      newPost.setAttribute('buttonimages', 'Images');
-      newPost.setAttribute('inputtext', 'Share something...');
-      newPost.setAttribute('inputimage', 'Drag and drop or upload media');
-      newPost.setAttribute('club', 'Select a Club');
-      newPost.setAttribute('post', 'Post');
+        postContainer.appendChild(newPost);
+        container.appendChild(postContainer);
 
-      postContainer.appendChild(newPost);
-      container.appendChild(postContainer);
+        // Posts & pop up
+        const postDashboard = this.ownerDocument.createElement('section');
+        postDashboard.className = 'post-dashboard';
 
-      // Posts & pop up
-      const postDashboard = this.ownerDocument.createElement('section');
-      postDashboard.className = 'post-dashboard';
+        postContainer.appendChild(postDashboard);
+        this.renderGetPostsAction(postDashboard);
 
-      // if (dataPosts && Array.isArray(dataPosts)) {
-      //     dataPosts.forEach(dataPost => {
-      //         const post = this.ownerDocument.createElement('post-component') as Post;
+        const clubsContainer = this.ownerDocument.createElement('section');
+        clubsContainer.className = 'clubs-container';
 
-      //         post.setAttribute('clubpic', dataPost.clubpic);
-      //         post.setAttribute('clubname', dataPost.clubname);
-      //         post.setAttribute('image', dataPost.image);
-      //         post.setAttribute('likes', dataPost.likes.toString());
-      //         post.setAttribute('comments', dataPost.comments.toString());
-      //         post.setAttribute('author', dataPost.author);
-      //         post.setAttribute('desc', dataPost.desc);
+        if (dataClubs && Array.isArray(dataClubs)) {
+          const clubsCard1 = this.ownerDocument.createElement('clubs-card') as ClubsCard;
+          clubsCard1.setAttribute('cardtitle', 'Clubs');
+          clubsCard1.setAttribute('buttontext', 'Your Clubs');
+          clubsCard1.setAttribute('cardcolor', '#6471C7');
+          clubsCard1.setAttribute('buttoncolor', '#6471C7');
+          clubsContainer.appendChild(clubsCard1);
 
-      //         postDashboard.appendChild(post);
-      //         this.post.push(post);
-      //     });
-      // } else {
-      //     console.error('dataPosts is not an array or is undefined');
-      // }
+          const clubsCard2 = this.ownerDocument.createElement('clubs-card-discover') as ClubsCardDiscover;
+          clubsCard2.setAttribute('cardtitle', 'Discover');
+          clubsCard2.setAttribute('buttontext', 'Discover now');
+          clubsCard2.setAttribute('cardcolor', '#C2BE4D');
+          clubsCard2.setAttribute('buttoncolor', '#C2BE4D');
+          clubsContainer.appendChild(clubsCard2);
+        }
 
-      postContainer.appendChild(postDashboard);
-      this.renderGetPostsAction(postDashboard);
+        this.renderDiscoverCards(clubsContainer);
 
-      const clubsContainer = this.ownerDocument.createElement('section');
-      clubsContainer.className = 'clubs-container';
+        userContainer.appendChild(clubsContainer);
 
-      if (dataClubs && Array.isArray(dataClubs)) {
-        const clubsCard1 = this.ownerDocument.createElement('clubs-card') as ClubsCard;
-        clubsCard1.setAttribute('cardtitle', 'Clubs');
-        clubsCard1.setAttribute('buttontext', 'Your Clubs');
-        clubsCard1.setAttribute('cardcolor', '#6471C7');
-        clubsCard1.setAttribute('buttoncolor', '#6471C7');
-        clubsContainer.appendChild(clubsCard1);
-
-        const clubsCard2 = this.ownerDocument.createElement('clubs-card-discover') as ClubsCardDiscover;
-        clubsCard2.setAttribute('cardtitle', 'Discover');
-        clubsCard2.setAttribute('buttontext', 'Discover now');
-        clubsCard2.setAttribute('cardcolor', '#C2BE4D');
-        clubsCard2.setAttribute('buttoncolor', '#C2BE4D');
-        clubsContainer.appendChild(clubsCard2);
+        this.shadowRoot.appendChild(navBar);
+        this.shadowRoot.appendChild(userBanner);
+        this.shadowRoot.appendChild(container);
       }
-
-      this.renderDiscoverCards(clubsContainer);
-
-      userContainer.appendChild(clubsContainer);
-
-      this.shadowRoot.appendChild(navBar);
-      this.shadowRoot.appendChild(container);
     }
   }
 
