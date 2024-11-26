@@ -2,30 +2,39 @@ import * as components from '../../components/index';
 import '../../components/userInfo/userInfo';
 import '../../components/navBar/navBar';
 import '../../components/userMenu/userMenu';
-import UserInfo from '../../components/userInfo/userInfo';
+import '../../components/newPost/newPost';
+import '../../components/postComponent/post';
+import UserInfo, { AttributeUserInfo } from '../../components/userInfo/userInfo';
 import { dataUsers } from '../../data/dataUsers';
+import Post, { Attribute2 } from '../../components/postComponent/post';
+import { dataPosts } from '../../data/dataPosts';
 import '../../components/postPopUp/postPopUp';
+import PostPopUp, { Attribute3 } from '../../components/postPopUp/postPopUp';
 import '../../components/elements/clubInfo/clubInfo';
-import '../../components/clubsCard/clubsCard';
 import ClubsCard, { AttributeClubsCard } from '../../components/clubsCard/clubsCard';
-import '../../components/clubsCardDiscover/clubsCardDiscover';
+import '../../components/clubsCard/clubsCard';
 import ClubsCardDiscover, { AttributeClubsCardDiscover } from '../../components/clubsCardDiscover/clubsCardDiscover';
+import '../../components/clubsCardDiscover/clubsCardDiscover';
 import { dataClubs } from '../../data/dataClubs';
-import '../../components/DiscoverLandingCards/DiscoverLandingCards';
+import '../../components/logoutButton/logoutButton';
+import clubInfo, { AttributeClubInfo } from '../../components/elements/clubInfo/clubInfo';
+import '../../components/elements/clubInfo/clubInfo';
+import { appState, dispatch, addObserver } from '../../store';
 import DiscoverLandingCards, { AttributeDiscoverLandingCards } from '../../components/DiscoverLandingCards/DiscoverLandingCards';
-import '../../components/banner/banner';
-import { appState, addObserver, dispatch } from '../../store/index';
-import { getClubsAction, getDiscoverCardsAction } from '../../store/actions';
 import Banner, { AttributeBanner } from '../../components/banner/banner';
+import { getDiscoverCardsAction, getPostsAction } from '../../store/actions';
+import { Screens } from '../../types/store';
 
 class Profile extends HTMLElement {
   user: UserInfo[] = [];
+  post: Post[] = [];
   currentUserPic: string = '';
 
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
     addObserver(this);
+
     this.currentUserPic = dataUsers[0].userpic;
 
     dataUsers.forEach(dataUser => {
@@ -39,22 +48,43 @@ class Profile extends HTMLElement {
   }
 
   async connectedCallback() {
-    console.log('Clubs', appState.cards);
-    try {
-      if (!appState.cards || appState.cards.length === 0) {
-        const action = await getDiscoverCardsAction();
-        if (action) {
-          dispatch(action);
-        }
+    // Cargar las tarjetas de discover si no están cargadas
+    if (appState.cards.length === 0) {
+      const action = await getDiscoverCardsAction();
+      if (action) {
+        dispatch(action);
       }
-      this.render();
-    } catch (error) {
-      console.error("Error loading clubs:", error);
     }
-    this.render()
+
+    console.log('Dashboard cards', appState.cards.length);
+    console.log('Dashboard post', appState.posts.length);
+
+
+
+    if (appState.posts.length != 0) {
+
+    } else {
+      console.log('Dashboard quantity', appState.posts.length);
+
+      const action = await getPostsAction();
+      dispatch(action);
+      console.log('post in appstate', appState.posts);
+
+
+    }
+
+
+    this.render();
   }
 
-  async renderUserClubs(container: HTMLElement) {
+  async renderDiscoverCards(container: HTMLElement) {
+    if (!appState.cards || !Array.isArray(appState.cards)) {
+      console.log("No discover cards available");
+      return;
+    }
+  }
+
+  async renderGetPostsAction(container: HTMLElement) {
     try {
       const userId = appState.user;
 
@@ -65,100 +95,32 @@ class Profile extends HTMLElement {
 
       container.innerHTML = '';
 
-      if (!Array.isArray(appState.cards)) {
-        console.log("No discover cards found in appState");
-        this.renderEmptyState(container);
-        return;
-      }
-
-      // Filter the cards where the current user is in usersid
-      const userClubs = appState.cards.filter((club: any) =>
-        club.usersid && Array.isArray(club.usersid) && club.usersid.includes(userId)
-      );
-
-      if (userClubs.length === 0) {
-        this.renderEmptyState(container);
-        return;
-      }
-
-      userClubs.forEach((club: any) => {
-        const clubCard = this.ownerDocument.createElement('discover-landing-card') as DiscoverLandingCards;
-        clubCard.setAttribute(AttributeDiscoverLandingCards.uid, String(club.uid));
-        clubCard.setAttribute(AttributeDiscoverLandingCards.image, club.image);
-        clubCard.setAttribute(AttributeDiscoverLandingCards.name, club.name);
-        clubCard.setAttribute('bg-color', '#6471c7');
-        clubCard.setAttribute(AttributeDiscoverLandingCards.members, club.members);
-        clubCard.setAttribute(AttributeDiscoverLandingCards.button, 'Remove');
-
-        // Apply styles to the button
-        const button = clubCard.shadowRoot?.querySelector('.button') as HTMLButtonElement;
-        if (button) {
-          button.disabled = true;
-          button.style.backgroundColor = '#808080';
-        }
-
-        clubCard.classList.add('user-club-card');
-        container.appendChild(clubCard);
+      appState.posts.forEach((dataPost: any) => {
+        console.log("Processing post data:", dataPost);
+        const post = this.ownerDocument.createElement('post-component') as Post;
+        post.setAttribute(Attribute2.clubpic, dataPost.imageUrl);
+        post.setAttribute(Attribute2.clubname, dataPost.name);
+        post.setAttribute(Attribute2.image, dataPost.imageUrl);
+        post.setAttribute(Attribute2.likes, dataPost.likes);
+        post.setAttribute(Attribute2.comments, dataPost.comments);
+        post.setAttribute(Attribute2.author, dataPost.name);
+        post.setAttribute(Attribute2.desc, dataPost.caption);
+        container.appendChild(post);
       });
 
     } catch (error) {
-      console.error("Error rendering user clubs:", error);
-      this.renderErrorState(container);
+      console.error("Error rendering post-component:", error);
+      return;
     }
-  }
-
-  renderEmptyState(container: HTMLElement) {
-    const emptyState = this.ownerDocument.createElement('div');
-    emptyState.className = 'empty-state';
-
-    const message = this.ownerDocument.createElement('p');
-    message.textContent = 'No clubs joined yet. Discover new clubs to join!';
-    message.className = 'empty-state-message';
-
-    const discoverLink = this.ownerDocument.createElement('a');
-    discoverLink.href = '#/discover';
-    discoverLink.textContent = 'Explore Clubs';
-    discoverLink.className = 'discover-link';
-
-    emptyState.appendChild(message);
-    emptyState.appendChild(discoverLink);
-    container.appendChild(emptyState);
-  }
-
-  renderErrorState(container: HTMLElement) {
-    const errorState = this.ownerDocument.createElement('div');
-    errorState.className = 'error-state';
-
-    const message = this.ownerDocument.createElement('p');
-    message.textContent = 'Unable to load your clubs. Please try again later.';
-    message.className = 'error-message';
-
-    const retryButton = this.ownerDocument.createElement('button');
-    retryButton.textContent = 'Retry';
-    retryButton.className = 'retry-button';
-    retryButton.onclick = async () => {
-      const action = await getClubsAction();
-      if (action) {
-        dispatch(action);
-        this.render();
-      }
-    };
-
-    errorState.appendChild(message);
-    errorState.appendChild(retryButton);
-    container.appendChild(errorState);
   }
 
   render() {
     if (this.shadowRoot) {
       this.shadowRoot.innerHTML = '';
 
-      console.log('Clubs', appState.cards);
-
-
       const link = document.createElement('link');
       link.rel = 'stylesheet';
-      link.href = '../src/screens/PROFILE/PROFILE.css';
+      link.href = '../src/screens/DASHBOARD/DASHBOARD.css';
       this.shadowRoot.appendChild(link);
 
       const navBar = this.ownerDocument.createElement('nav-bar');
@@ -186,26 +148,52 @@ class Profile extends HTMLElement {
       userContainer.appendChild(userMenu);
       container.appendChild(userContainer);
 
+
+
       const postContainer = this.ownerDocument.createElement('section');
       postContainer.className = 'post-container';
+
+      const newPost = this.ownerDocument.createElement('new-post');
+      newPost.setAttribute('userpic', this.currentUserPic);
+      newPost.setAttribute('text', 'Create new post');
+      newPost.setAttribute('buttontext', 'Text');
+      newPost.setAttribute('buttonimages', 'Images');
+      newPost.setAttribute('inputtext', 'Share something...');
+      newPost.setAttribute('inputimage', 'Drag and drop or upload media');
+      newPost.setAttribute('club', 'Select a Club');
+      newPost.setAttribute('post', 'Post');
+
+      postContainer.appendChild(newPost);
       container.appendChild(postContainer);
+
+      // Posts & pop up
+      const postDashboard = this.ownerDocument.createElement('section');
+      postDashboard.className = 'post-dashboard';
+
+      // if (dataPosts && Array.isArray(dataPosts)) {
+      //     dataPosts.forEach(dataPost => {
+      //         const post = this.ownerDocument.createElement('post-component') as Post;
+
+      //         post.setAttribute('clubpic', dataPost.clubpic);
+      //         post.setAttribute('clubname', dataPost.clubname);
+      //         post.setAttribute('image', dataPost.image);
+      //         post.setAttribute('likes', dataPost.likes.toString());
+      //         post.setAttribute('comments', dataPost.comments.toString());
+      //         post.setAttribute('author', dataPost.author);
+      //         post.setAttribute('desc', dataPost.desc);
+
+      //         postDashboard.appendChild(post);
+      //         this.post.push(post);
+      //     });
+      // } else {
+      //     console.error('dataPosts is not an array or is undefined');
+      // }
+
+      postContainer.appendChild(postDashboard);
+      this.renderGetPostsAction(postDashboard);
 
       const clubsContainer = this.ownerDocument.createElement('section');
       clubsContainer.className = 'clubs-container';
-
-      const banner = this.ownerDocument.createElement('banner-component') as Banner;
-      banner.setAttribute(AttributeBanner.utitle, 'Millions of clubs picked for you!');
-      banner.setAttribute(AttributeBanner.text, 'Register in any club for FREE and start experiencing a new way of living your favorite literary stories.');
-      banner.setAttribute(AttributeBanner.image, 'https://github.com/ItsSilva/bookloop/blob/juanito/src/assets/bannerIMG/handBanner.png?raw=true');
-      banner.setAttribute('bg-color', '#6471c7');
-      postContainer.appendChild(banner);
-
-      const userClubsContainer = this.ownerDocument.createElement('div');
-      userClubsContainer.className = 'discover-card-container';
-      postContainer.appendChild(userClubsContainer);
-
-      // Render the user's clubs
-      this.renderUserClubs(userClubsContainer);
 
       if (dataClubs && Array.isArray(dataClubs)) {
         const clubsCard1 = this.ownerDocument.createElement('clubs-card') as ClubsCard;
@@ -223,12 +211,24 @@ class Profile extends HTMLElement {
         clubsContainer.appendChild(clubsCard2);
       }
 
+      this.renderDiscoverCards(clubsContainer);
+
       container.appendChild(clubsContainer);
 
       this.shadowRoot.appendChild(navBar);
       this.shadowRoot.appendChild(container);
     }
   }
+
+  handleLogout() {
+    // Limpia el estado del usuario en appState o realiza la acción de logout
+    appState.user = {};
+    dispatch({ type: 'LOGOUT' });
+
+    // Redirigir al usuario a la pantalla de login o la página principal
+    window.location.href = '/login';
+  }
+
 }
 
 customElements.define('app-profile', Profile);
