@@ -88,7 +88,16 @@ class Profile extends HTMLElement {
 
       container.innerHTML = '';
 
-      appState.posts.forEach((dataPost: any) => {
+      const userPosts = appState.posts.filter((post: any) =>
+        post.userId === userId
+      );
+
+      if (userPosts.length === 0) {
+        console.log("No posts found for the current user");
+        return;
+      }
+
+      userPosts.forEach((dataPost: any) => {
         // console.log("Processing post data:", dataPost);
         const post = this.ownerDocument.createElement('post-component') as Post;
         post.setAttribute(Attribute2.clubpic, dataPost.imageUrl);
