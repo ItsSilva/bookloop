@@ -26,16 +26,17 @@ class ClubsLanding extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
         addObserver(this);
-        this.currentUserPic = dataUsers[0].userpic;
 
-        dataUsers.forEach(dataUser => {
-            const userCard = this.ownerDocument.createElement('user-info') as UserInfo;
-            userCard.setAttribute('background', dataUser.background);
-            userCard.setAttribute('userpic', dataUser.userpic);
-            userCard.setAttribute('name', dataUser.name);
-            userCard.setAttribute('username', dataUser.username);
-            this.user.push(userCard);
-        });
+        this.currentUserPic = dataUsers[0].userpic;
+        const dataUser = dataUsers[0];
+
+        const userCard = this.ownerDocument.createElement('user-info') as UserInfo;
+        userCard.setAttribute('background', dataUser.background);
+        userCard.setAttribute('userpic', dataUser.userpic);
+        userCard.setAttribute('name', appState.userData.name);
+        userCard.setAttribute('userName', appState.userData.userName);
+        this.user.push(userCard);
+
     }
 
     async connectedCallback() {
@@ -57,7 +58,7 @@ class ClubsLanding extends HTMLElement {
     async renderUserClubs(container: HTMLElement) {
         try {
             const userId = appState.user;
-            
+
             if (!userId) {
                 console.error("No user ID found in appState");
                 return;
@@ -72,7 +73,7 @@ class ClubsLanding extends HTMLElement {
             }
 
             // Filter the cards where the current user is in usersid
-            const userClubs = appState.cards.filter((club: any) => 
+            const userClubs = appState.cards.filter((club: any) =>
                 club.usersid && Array.isArray(club.usersid) && club.usersid.includes(userId)
             );
 
@@ -89,14 +90,14 @@ class ClubsLanding extends HTMLElement {
                 clubCard.setAttribute('bg-color', '#6471c7');
                 clubCard.setAttribute(AttributeDiscoverLandingCards.members, club.members);
                 clubCard.setAttribute(AttributeDiscoverLandingCards.button, 'Remove');
-                
+
                 // Apply styles to the button
                 const button = clubCard.shadowRoot?.querySelector('.button') as HTMLButtonElement;
                 if (button) {
                     button.disabled = true;
                     button.style.backgroundColor = '#808080';
                 }
-                
+
                 clubCard.classList.add('user-club-card');
                 container.appendChild(clubCard);
             });
@@ -110,16 +111,16 @@ class ClubsLanding extends HTMLElement {
     renderEmptyState(container: HTMLElement) {
         const emptyState = this.ownerDocument.createElement('div');
         emptyState.className = 'empty-state';
-        
+
         const message = this.ownerDocument.createElement('p');
         message.textContent = 'No clubs joined yet. Discover new clubs to join!';
         message.className = 'empty-state-message';
-        
+
         const discoverLink = this.ownerDocument.createElement('a');
         discoverLink.href = '#/discover';
         discoverLink.textContent = 'Explore Clubs';
         discoverLink.className = 'discover-link';
-        
+
         emptyState.appendChild(message);
         emptyState.appendChild(discoverLink);
         container.appendChild(emptyState);
@@ -128,11 +129,11 @@ class ClubsLanding extends HTMLElement {
     renderErrorState(container: HTMLElement) {
         const errorState = this.ownerDocument.createElement('div');
         errorState.className = 'error-state';
-        
+
         const message = this.ownerDocument.createElement('p');
         message.textContent = 'Unable to load your clubs. Please try again later.';
         message.className = 'error-message';
-        
+
         const retryButton = this.ownerDocument.createElement('button');
         retryButton.textContent = 'Retry';
         retryButton.className = 'retry-button';
@@ -143,7 +144,7 @@ class ClubsLanding extends HTMLElement {
                 this.render();
             }
         };
-        
+
         errorState.appendChild(message);
         errorState.appendChild(retryButton);
         container.appendChild(errorState);
@@ -155,7 +156,7 @@ class ClubsLanding extends HTMLElement {
 
             console.log('Clubs', appState.cards);
 
-            
+
             const link = document.createElement('link');
             link.rel = 'stylesheet';
             link.href = '../src/screens/CLUBSLANDING/CLUBSLANDING.css';
