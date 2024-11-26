@@ -22,7 +22,7 @@ import '../../components/elements/clubInfo/clubInfo';
 import { appState, dispatch, addObserver } from '../../store';
 import DiscoverLandingCards, { AttributeDiscoverLandingCards } from '../../components/DiscoverLandingCards/DiscoverLandingCards';
 import Banner, { AttributeBanner } from '../../components/banner/banner';
-import { getDiscoverCardsAction, getPostsAction} from '../../store/actions';
+import { getDiscoverCardsAction, getPostsAction } from '../../store/actions';
 import { Screens } from '../../types/store';
 
 class Dashboard extends HTMLElement {
@@ -59,21 +59,21 @@ class Dashboard extends HTMLElement {
         console.log('Dashboard cards', appState.cards.length);
         console.log('Dashboard post', appState.posts.length);
 
-        
+
 
         if (appState.posts.length != 0) {
-            
-                }else {
-                console.log('Dashboard quantity', appState.posts.length);
-            
-        const action = await getPostsAction();
-        dispatch(action);
-        console.log('post in appstate', appState.posts);
-                
+
+        } else {
+            console.log('Dashboard quantity', appState.posts.length);
+
+            const action = await getPostsAction();
+            dispatch(action);
+            console.log('post in appstate', appState.posts);
+
 
         }
 
-                
+
         this.render();
     }
 
@@ -87,7 +87,7 @@ class Dashboard extends HTMLElement {
     async renderGetPostsAction(container: HTMLElement) {
         try {
             const userId = appState.user;
-            
+
             if (!userId) {
                 console.error("No user ID found in appState");
                 return;
@@ -96,7 +96,7 @@ class Dashboard extends HTMLElement {
             container.innerHTML = '';
 
             appState.posts.forEach((dataPost: any) => {
-                console.log("Processing post data:", dataPost);
+                // console.log("Processing post data:", dataPost);
                 const post = this.ownerDocument.createElement('post-component') as Post;
                 post.setAttribute(Attribute2.clubpic, dataPost.imageUrl);
                 post.setAttribute(Attribute2.clubname, dataPost.name);
@@ -148,7 +148,7 @@ class Dashboard extends HTMLElement {
             userContainer.appendChild(userMenu);
             container.appendChild(userContainer);
 
-         
+
 
             const postContainer = this.ownerDocument.createElement('section');
             postContainer.className = 'post-container';
@@ -222,11 +222,11 @@ class Dashboard extends HTMLElement {
 
     handleLogout() {
         // Limpia el estado del usuario en appState o realiza la acción de logout
-        appState.user = {}; 
-        dispatch({ type: 'LOGOUT' }); 
-    
+        appState.user = {};
+        dispatch({ type: 'LOGOUT' });
+
         // Redirigir al usuario a la pantalla de login o la página principal
-        window.location.href = '/login'; 
+        window.location.href = '/login';
     }
 
 }
