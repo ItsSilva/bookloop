@@ -9,12 +9,12 @@ const onAuth = async () => {
 	const { auth } = await getFirebaseInstance();
 	onAuthStateChanged(auth, (user) => {
 		console.log(user);
-		if (user){
+		if (user) {
 			user.uid !== null ? dispatch(setUserCredentials(user.uid)) : '';
 			dispatch(navigate(Screens.DASHBOARD));
 			console.log('user data', appState.userData);
-			
-		}else{
+
+		} else {
 			dispatch(navigate(Screens.LOGIN));
 		};
 	});
