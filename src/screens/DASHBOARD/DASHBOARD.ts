@@ -36,15 +36,15 @@ class Dashboard extends HTMLElement {
         addObserver(this);
 
         this.currentUserPic = dataUsers[0].userpic;
+        const dataUser = dataUsers[0];
 
-        dataUsers.forEach(dataUser => {
-            const userCard = this.ownerDocument.createElement('user-info') as UserInfo;
-            userCard.setAttribute('background', dataUser.background);
-            userCard.setAttribute('userpic', dataUser.userpic);
-            userCard.setAttribute('name', dataUser.name);
-            userCard.setAttribute('username', dataUser.username);
-            this.user.push(userCard);
-        });
+        const userCard = this.ownerDocument.createElement('user-info') as UserInfo;
+        userCard.setAttribute('background', dataUser.background);
+        userCard.setAttribute('userpic', dataUser.userpic);
+        userCard.setAttribute('name', appState.userData.name);
+        userCard.setAttribute('userName', appState.userData.userName);
+        this.user.push(userCard);
+
     }
 
     async connectedCallback() {
