@@ -50,8 +50,8 @@ export const reducer = (currentAction: any, currentState: any) => {
 		case Actions.UPDATEPROFILE:
 			return {
 				...currentState,
-				user: [...currentState.user.map((user: any) => user.uid === payload.uid ? payload : user)],
-			}
+				userData: currentState.userData.uid === payload.uid ? payload : currentState.userData,
+			};
 		default:
 			return currentState;
 
