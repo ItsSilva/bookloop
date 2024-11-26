@@ -29,15 +29,15 @@ class DiscoverLanding extends HTMLElement {
         addObserver(this);
 
         this.currentUserPic = dataUsers[0].userpic;
+        const dataUser = dataUsers[0];
 
-        dataUsers.forEach(dataUser => {
-            const userCard = this.ownerDocument.createElement('user-info') as UserInfo;
-            userCard.setAttribute('background', dataUser.background);
-            userCard.setAttribute('userpic', dataUser.userpic);
-            userCard.setAttribute('name', dataUser.name);
-            userCard.setAttribute('username', dataUser.username);
-            this.user.push(userCard);
-        });
+        const userCard = this.ownerDocument.createElement('user-info') as UserInfo;
+        userCard.setAttribute('background', dataUser.background);
+        userCard.setAttribute('userpic', dataUser.userpic);
+        userCard.setAttribute('name', appState.userData.name);
+        userCard.setAttribute('userName', appState.userData.userName);
+        this.user.push(userCard);
+
     }
 
     async connectedCallback() {
@@ -56,13 +56,13 @@ class DiscoverLanding extends HTMLElement {
             console.log("No discover cards available");
             return;
         }
-    
+
         container.innerHTML = '';
 
-        const userClubs = appState.cards.filter((club: any) => 
+        const userClubs = appState.cards.filter((club: any) =>
             club.usersid && Array.isArray(club.usersid) && !club.usersid.includes(appState.user)
         );
-    
+
         userClubs.forEach((club: any) => {
             const clubCard = this.ownerDocument.createElement('discover-landing-card') as DiscoverLandingCards;
             clubCard.setAttribute(AttributeDiscoverLandingCards.uid, String(club.uid));
@@ -70,14 +70,14 @@ class DiscoverLanding extends HTMLElement {
             clubCard.setAttribute(AttributeDiscoverLandingCards.name, club.name);
             clubCard.setAttribute(AttributeDiscoverLandingCards.members, club.members);
             clubCard.setAttribute(AttributeDiscoverLandingCards.button, 'Join');
-            
+
             // Apply styles to the button
             const button = clubCard.shadowRoot?.querySelector('.button') as HTMLButtonElement;
             if (button) {
                 button.disabled = true;
                 button.style.backgroundColor = '#808080';
             }
-            
+
             clubCard.classList.add('user-club-card');
             container.appendChild(clubCard);
         });
