@@ -48,7 +48,7 @@ class UserBanner extends HTMLElement {
 
         const editButton = this.shadowRoot?.querySelector('.edit-btn');
         editButton?.addEventListener('click', () => {
-            dispatch(navigate(Screens.PROFILE));
+            dispatch(navigate(Screens.EDITPROFILE));
         });
 
         const logoutButton = this.shadowRoot?.querySelector('.logout-btn');
