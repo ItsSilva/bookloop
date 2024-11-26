@@ -141,14 +141,6 @@ class Profile extends HTMLElement {
           userContainer.appendChild(userCard);
         });
 
-        const userMenu = this.ownerDocument.createElement('user-menu');
-        userMenu.setAttribute('home', '#');
-        userMenu.setAttribute('clubs', '#');
-        userMenu.setAttribute('discover', '#');
-        userMenu.setAttribute('help', '#');
-        userMenu.setAttribute('setting', '#');
-
-        userContainer.appendChild(userMenu);
         container.appendChild(userContainer);
 
         const postContainer = this.ownerDocument.createElement('section');
