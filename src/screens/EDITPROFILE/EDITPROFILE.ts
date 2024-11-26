@@ -9,14 +9,35 @@ class EditProfile extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
-        this.editedProduct = appState.userData;
+
+        // Asegúrate de que appState.userData tenga valores válidos
+        this.editedProduct = appState.userData
+            ? { ...appState.userData } // Copiar datos del usuario
+            : { uid: '', name: '', userName: '' }; // Estructura por defecto
+
+        this.editedProduct = {
+            uid: '',
+            name: '',
+            userName: '',
+        };
+
         this.changeName = this.changeName.bind(this);
         this.changeUserName = this.changeUserName.bind(this);
+        this.submitForm = this.submitForm.bind(this);
+
+        console.log("Estado inicial de appState.userData:", appState.userData);
     }
 
+
     connectedCallback() {
+        if (!appState.userData) {
+            console.error("No se encontraron datos de usuario en appState.");
+        } else {
+            this.editedProduct = { ...appState.userData };
+        }
         this.render();
     }
+
 
     changeName(e: any) {
         const input = e.target as HTMLInputElement;
@@ -29,10 +50,21 @@ class EditProfile extends HTMLElement {
     }
 
     async submitForm() {
-        console.log('Edited Product for FB', this.editedProduct);
-        dispatch(updateProfile(this.editedProduct));
-        dispatch(navigate(Screens.PROFILE));
+        if (!this.editedProduct || !this.editedProduct.uid) {
+            console.error("Los datos del producto editado están incompletos o son inválidos:", this.editedProduct);
+            return;
+        }
+
+        try {
+            console.log('Edited Product for FB', this.editedProduct);
+            await dispatch(updateProfile(this.editedProduct)); // Actualizar perfil
+            dispatch(navigate(Screens.PROFILE)); // Navegar al perfil
+        } catch (error) {
+            console.error("Error al enviar el formulario:", error);
+        }
     }
+
+
 
     redirectToLogin() {
         dispatch(navigate(Screens.PROFILE));
