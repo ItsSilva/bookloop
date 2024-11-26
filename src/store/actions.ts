@@ -137,10 +137,10 @@ export const addCommentAction = (postId: string, comment: string) => ({
     payload: { postId, comment }
 });
 
-export const updateProfileAction = async (user: any) => {
-    await updateProfile(user);
+export const updateProfileAction = async (userData: any) => {
+    await updateProfile(userData);
     return {
         action: Actions.UPDATEPROFILE,
-        payload: user,
+        payload: userData,
     }
 }
