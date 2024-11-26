@@ -385,13 +385,21 @@ export const addLikes = async (uid: string, liked: boolean) => {
 	}
 };
 
-export const updateProfile = async (user: any) => {
-	console.log(user);
+export const updateProfile = async (userData: any) => {
 	try {
 		const db = await getFirestore();
 		const { updateDoc, doc } = await import('firebase/firestore');
-		const docRef = doc(db, 'users', user.uid);
-		await updateDoc(docRef, user);
+
+		if (!userData.uid) {
+			throw new Error("El UID del usuario es inválido o está vacío.");
+		}
+
+		const docRef = doc(db, 'users', userData.uid); // Usa el UID como referencia
+		const updatedData = {
+			name: userData.name,
+			userName: userData.userName,
+		};
+		await updateDoc(docRef, updatedData);
 	} catch (error) {
 		console.error("Error updating document:", error);
 	}
