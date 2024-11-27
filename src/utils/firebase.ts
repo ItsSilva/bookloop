@@ -1,6 +1,6 @@
 import { browserLocalPersistence } from 'firebase/auth';
 import { appState, dispatch } from '../store/index';
-import { addDoc, collection, doc, getDocs, getFirestore } from 'firebase/firestore';
+import { addDoc, collection, doc, getDocs, getFirestore, getDoc, arrayRemove } from 'firebase/firestore';
 import { navigate, setUserCredentials, setUserData } from '../store/actions';
 import { Screens } from '../types/store';
 import { updateDoc, arrayUnion } from 'firebase/firestore';
@@ -350,40 +350,37 @@ export const getPostsByUser = async (uid: string) => {
 	return filtered;
 };
 
-export const addLikes = async (uid: string, liked: boolean) => {
+export const addLikes = async (userId: string, postId: string) => {
 	try {
 		const { db } = await getFirebaseInstance();
-		const { doc, updateDoc, arrayUnion, arrayRemove } = await import('firebase/firestore');
+		const postRef = doc(db, 'posts', postId);
+		const postSnapshot = await getDoc(postRef);
 
-		const userId = appState.user;
-		console.log("Current userId:", userId);
+		if (postSnapshot.exists()) {
+			const postData = postSnapshot.data();
+			const likes = postData.likes || [];
+			const hasLiked = likes.includes(userId);
 
-		if (!userId) {
-			throw new Error("No user ID found in appState");
-		}
-
-		// Reference to the specific document in posts collection
-		const postRef = doc(db, 'posts', uid);
-
-		// Update the likes array based on the liked state
-		if (liked) {
-			await updateDoc(postRef, {
-				likes: arrayUnion(userId)
-			});
+			if (hasLiked) {
+				await updateDoc(postRef, {
+					likes: arrayRemove(userId),
+				});
+				return likes.length - 1;
+			} else {
+				await updateDoc(postRef, {
+					likes: arrayUnion(userId),
+				});
+				return likes.length + 1;
+			}
 		} else {
-			await updateDoc(postRef, {
-				likes: arrayRemove(userId)
-			});
+			throw new Error(`Post with ID ${postId} not found`);
 		}
-
-		console.log("Likes updated successfully");
-		return true;
-
 	} catch (error) {
 		console.error("Error in addLikes:", error);
 		throw error;
 	}
 };
+
 
 export const updateProfile = async (userData: any) => {
 	try {
