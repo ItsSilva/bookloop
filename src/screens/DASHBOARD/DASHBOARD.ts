@@ -102,7 +102,7 @@ class Dashboard extends HTMLElement {
                 post.setAttribute(Attribute2.clubname, dataPost.name);
                 post.setAttribute(Attribute2.image, dataPost.imageUrl);
                 post.setAttribute(Attribute2.likes, dataPost.likes);
-                post.setAttribute(Attribute2.comments, dataPost.comments);
+                // post.setAttribute(Attribute2.comments, dataPost.comments);
                 post.setAttribute(Attribute2.author, dataPost.name);
                 post.setAttribute(Attribute2.desc, dataPost.caption);
                 container.appendChild(post);
