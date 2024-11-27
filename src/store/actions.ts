@@ -112,11 +112,11 @@ export const getPostsAction = async () => {
 
 export const addLikesAction = async (postId: string, liked: boolean) => {
     try {
-        const likeCount = await addLikes(postId, postId);
+        const likeCount = await addLikes(postId); // Pasamos directamente el postId
         dispatch({
             type: Actions.ADDLIKES,
             payload: {
-                postId,
+                postId, // Cambiamos userId por postId para que coincida con el reducer
                 likeCount,
                 liked,
             },
@@ -127,10 +127,6 @@ export const addLikesAction = async (postId: string, liked: boolean) => {
         return false;
     }
 };
-export const addCommentAction = (postId: string, comment: string) => ({
-    type: 'ADD_COMMENT',
-    payload: { postId, comment }
-});
 
 export const updateProfileAction = async (userData: any) => {
     await updateProfile(userData);
