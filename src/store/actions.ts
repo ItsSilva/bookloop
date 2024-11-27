@@ -110,28 +110,23 @@ export const getPostsAction = async () => {
     }
 };
 
-export const addLikesAction = async (uid: string, liked: boolean) => {
+export const addLikesAction = async (postId: string, liked: boolean) => {
     try {
-        console.log("Adding user to club:", uid, liked);
-        const success = await addLikes(uid, liked);
-
-        if (success) {
-            // Get updated clubs after adding
-            console.log("Updated clubs after adding:", success);
-
-            dispatch({
-                action: Actions.ADDLIKES,
-                payload: success,
-            });
-            return true;
-        }
-        return false;
+        const likeCount = await addLikes(postId, postId);
+        dispatch({
+            type: Actions.ADDLIKES,
+            payload: {
+                postId,
+                likeCount,
+                liked,
+            },
+        });
+        return true;
     } catch (error) {
-        console.error("Error in addClubForUser:", error);
+        console.error("Error in addLikesAction:", error);
         return false;
     }
 };
-
 export const addCommentAction = (postId: string, comment: string) => ({
     type: 'ADD_COMMENT',
     payload: { postId, comment }
