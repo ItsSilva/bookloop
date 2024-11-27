@@ -12,7 +12,6 @@ export enum Attribute2 {
     'clubname' = 'clubname',
     'image' = 'image',
     'likes' = 'likes',
-    'comments' = 'comments',
     'author' = 'author',
     'desc' = 'desc',
     'uid' = 'uid',
@@ -22,10 +21,8 @@ class Post extends HTMLElement {
     clubpic?: string;
     clubname?: string;
     image?: string;
-    comments?: number;
     author?: string;
     desc?: string;
-    usercomments: string[] = [];
     likes: number = 0;
     liked: boolean = false;
     uid: string;
@@ -38,10 +35,8 @@ class Post extends HTMLElement {
         this.clubpic = '';
         this.clubname = '';
         this.image = '';
-        this.comments = 0;
         this.author = '';
         this.desc = '';
-        this.usercomments = [];
         this.likes = 0;
         this.liked = false;
     }
@@ -64,9 +59,6 @@ class Post extends HTMLElement {
             case Attribute2.likes:
                 this.likes = newValue ? Number(newValue) : 0; // Convert to number
                 break;
-            case Attribute2.comments:
-                this.comments = newValue ? Number(newValue) : 0; // Convert to number
-                break;
             case Attribute2.author:
                 this.author = newValue as string;
                 break;
@@ -84,7 +76,7 @@ class Post extends HTMLElement {
 
     connectedCallback() {
         this.render();
-        this.addComments();
+        // this.addComments();
         this.addLikeHandler();
     }
 
@@ -108,88 +100,85 @@ class Post extends HTMLElement {
                 <i class="${this.liked ? 'fas fa-heart' : 'far fa-heart'}"></i> 
                 ${this.likes}
                 </button>
-                <span class="comments"><i class="fas fa-comment"></i> ${this.usercomments.length}</span>
+                <span class="comments"><i class="fas fa-comment"></i> 0</span>
                 </div>
                 <div class="post--author">
                 <h3>@${this.author}</h3>
                 <p>${this.desc}</p>
                 </div>
                 </div>  
-                <div class='container-inputs'>
-                <div class="input-wrapper-inputtext">
-                <i class="fa-solid fa-message" style="color: #999;"></i>
-                <input type="text" placeholder="Say something!" name="textInput" id="commentInput">
-                <button type="submit" id="sendComment">Send</button>
-                </div>
-                <div class="comments-list">
-                ${this.usercomments.map(comment => `<p class="comment-item">@${this.author}: ${comment}</p>`).join('')}
+                <div class="comments-list" id="commentsList">
                 </div>
                 </div>
                 </section>
                 `;
 
-            this.addImageClickHandler();
+            // this.addImageClickHandler();
             this.addLikeHandler();
-            this.addComments();
+            // this.addComments();
         }
     }
 
-    addImageClickHandler() {
-        const postImage = this.shadowRoot?.querySelector<HTMLImageElement>('.post-image');
+    // addImageClickHandler() {
+    //     const postImage = this.shadowRoot?.querySelector<HTMLImageElement>('.post-image');
 
-        if (postImage) {
-            postImage.addEventListener('click', (event) => {
-                event.stopPropagation();
+    //     if (postImage) {
+    //         postImage.addEventListener('click', (event) => {
+    //             event.stopPropagation();
 
-                const postPopup = document.createElement('post-popup') as PostPopUp;
-                postPopup.setPopupData(
-                    this.usercomments,
-                    this.clubname,
-                    this.image,
-                    this.clubpic,
-                    this.author,
-                    this.desc,
-                    this.liked,
-                );
-                document.body.appendChild(postPopup);
-                console.log("clicked");
-            });
-        }
-    }
+    //             const postPopup = document.createElement('post-popup') as PostPopUp;
+    //             postPopup.setPopupData(
+    //                 [], // Empty comments array
+    //                 this.clubname,
+    //                 this.image,
+    //                 this.clubpic,
+    //                 this.author,
+    //                 this.desc,
+    //                 this.liked,
+    //             );
+    //             document.body.appendChild(postPopup);
+    //             console.log("clicked");
+    //         });
+    //     }
+    // }
 
-    addComments() {
-        const input = this.shadowRoot?.querySelector<HTMLInputElement>('#commentInput');
-        const button = this.shadowRoot?.querySelector<HTMLButtonElement>('#sendComment');
+    // addComments() {
+    //     const input = this.shadowRoot?.querySelector<HTMLInputElement>('#commentInput');
+    //     const button = this.shadowRoot?.querySelector<HTMLButtonElement>('#sendComment');
+    //     const commentsList = this.shadowRoot?.querySelector<HTMLDivElement>('#commentsList');
 
-        if (input && button && this.uid) {
-            button.addEventListener('click', async () => {
-                const commentText = input.value.trim();
-                if (commentText) {
-                    try {
-                        // Guardar el comentario en Firebase
-                        await addComment(this.uid, commentText);
+    //     if (input && button && commentsList && this.uid) {
+    //         button.addEventListener('click', async () => {
+    //             const commentText = input.value.trim();
+    //             if (commentText) {
+    //                 try {
+    //                     // Guardar el comentario en Firebase
+    //                     await addComment(this.uid, commentText);
 
-                        // Actualizar la lista de comentarios en el componente
-                        this.usercomments.push(commentText);
-                        this.comments = this.usercomments.length;
-                        this.render();
-                        input.value = '';
+    //                     // Crear elemento de comentario
+    //                     const commentElement = document.createElement('p');
+    //                     commentElement.classList.add('comment-item');
+    //                     commentElement.textContent = `@${this.author}: ${commentText}`;
 
-                        // Despachar acción para actualizar el estado global si es necesario
-                        dispatch(addCommentAction(this.uid, commentText));
-                    } catch (error) {
-                        console.error("Error adding comment:", error);
-                    }
-                }
-            });
+    //                     // Agregar el comentario al div de comentarios
+    //                     commentsList.appendChild(commentElement);
+    //                     input.value = '';
 
-            input.addEventListener('keypress', (event) => {
-                if (event.key === 'Enter') {
-                    button.click();
-                }
-            });
-        }
-    }
+    //                     // Despachar acción para actualizar el estado global
+    //                     dispatch(addCommentAction(this.uid, commentText));
+    //                 } catch (error) {
+    //                     console.error("Error adding comment:", error);
+    //                 }
+    //             }
+    //         });
+
+    //         input.addEventListener('keypress', (event) => {
+    //             if (event.key === 'Enter') {
+    //                 button.click();
+    //             }
+    //         });
+    //     }
+    // }
 
     async addLikeHandler() {
         const likeButton = this.shadowRoot?.querySelector<HTMLButtonElement>('#likeButton');
@@ -199,7 +188,7 @@ class Post extends HTMLElement {
                 e.stopPropagation();
 
                 this.toggleLike();
-                
+
                 try {
                     // Actualiza el like en Firebase
                     await addLikes(this.uid, this.liked);
@@ -220,9 +209,7 @@ class Post extends HTMLElement {
     toggleLike() {
         this.liked = !this.liked;
     }
-    }
-
- 
+}
 
 customElements.define('post-component', Post);
 export default Post;
