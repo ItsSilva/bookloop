@@ -25,13 +25,13 @@ class Post extends HTMLElement {
     desc?: string;
     likes: number = 0;
     liked: boolean = false;
-    uid: string;
+    uid: any;
 
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
         addObserver(this);
-        this.uid = '';
+        this.uid = appState.user;
         this.clubpic = '';
         this.clubname = '';
         this.image = '';
@@ -75,10 +75,11 @@ class Post extends HTMLElement {
     }
 
     connectedCallback() {
+        console.log("Component connected");
         this.render();
-        // this.addComments();
         this.addLikeHandler();
     }
+
 
     render() {
         if (this.shadowRoot) {
@@ -186,25 +187,35 @@ class Post extends HTMLElement {
         if (likeButton && this.uid) {
             likeButton.addEventListener('click', async (e) => {
                 e.stopPropagation();
+                console.log("Button clicked!");
 
-                this.toggleLike();
+                // Optimistic update
+                this.liked = !this.liked;
+                this.likes += this.liked ? 1 : -1;
+
+                likeButton.innerHTML = `<i class="${this.liked ? 'fas fa-heart' : 'far fa-heart'}"></i> ${this.likes}`;
+                console.log(`Liked: ${this.liked}, Likes: ${this.likes}`);
 
                 try {
-                    // Actualiza el like en Firebase
-                    await addLikes(this.uid, this.liked);
-                    // Actualiza el estado global
+                    // Update in Firebase
+                    const updatedLikes = await addLikes(this.uid, this.uid);
+                    this.likes = updatedLikes;
                     dispatch(addLikesAction(this.uid, this.liked));
-                    // Actualiza el conteo local
-                    this.likes += this.liked ? 1 : -1;
-                    this.render();
                 } catch (error) {
-                    console.error("Error al añadir like:", error);
-                    // Revertir si hay un error
-                    this.toggleLike();
+                    console.error("Error adding like:", error);
+
+                    // Revert changes in case of error
+                    this.liked = !this.liked;
+                    this.likes += this.liked ? 1 : -1;
+                    likeButton.innerHTML = `<i class="${this.liked ? 'fas fa-heart' : 'far fa-heart'}"></i> ${this.likes}`;
                 }
             });
+        } else {
+            console.error("Like button not found or UID is missing.");
         }
     }
+
+
 
     toggleLike() {
         this.liked = !this.liked;
