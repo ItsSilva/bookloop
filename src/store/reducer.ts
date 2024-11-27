@@ -35,7 +35,7 @@ export const reducer = (currentAction: any, currentState: any) => {
 			return {
 				...currentState,
 				posts: currentState.posts.map((post: any) =>
-					post.uid === payload.postId
+					post.uid === payload.postId // Ya estamos usando postId aquí
 						? { ...post, likes: payload.likeCount, liked: payload.liked }
 						: post
 				),
