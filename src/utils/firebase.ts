@@ -350,25 +350,39 @@ export const getPostsByUser = async (uid: string) => {
 	return filtered;
 };
 
-export const addLikes = async (userId: string, postId: string) => {
+export const addLikes = async (postId: string) => {
 	try {
 		const { db } = await getFirebaseInstance();
+		const userUid = appState.userData.uid; // UID del usuario actual
+
+		// Validate inputs
+		if (!postId) {
+			throw new Error("Post ID is required");
+		}
+		if (!userUid) {
+			throw new Error("User is not authenticated");
+		}
+
+		// Log the details for debugging
+		console.log("Post ID:", postId);
+		console.log("User UID:", userUid);
+
 		const postRef = doc(db, 'posts', postId);
 		const postSnapshot = await getDoc(postRef);
 
 		if (postSnapshot.exists()) {
 			const postData = postSnapshot.data();
 			const likes = postData.likes || [];
-			const hasLiked = likes.includes(userId);
+			const hasLiked = likes.includes(userUid);
 
 			if (hasLiked) {
 				await updateDoc(postRef, {
-					likes: arrayRemove(userId),
+					likes: arrayRemove(userUid),
 				});
 				return likes.length - 1;
 			} else {
 				await updateDoc(postRef, {
-					likes: arrayUnion(userId),
+					likes: arrayUnion(userUid),
 				});
 				return likes.length + 1;
 			}
