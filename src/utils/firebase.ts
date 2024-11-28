@@ -139,8 +139,8 @@ export const registerUser = async (credentials: any) => {
 			name: credentials.name,
 			uid: userCredential.user.uid,
 			email: userCredential.user.email,
-			image: '',
-			bannerImage: '',
+			image: 'https://firebasestorage.googleapis.com/v0/b/bookloopdca.firebasestorage.app/o/imagesUserDefault%2FDefaultUserImage.jpg?alt=media&token=5b0ab601-3177-400f-8032-93e4fe8311a5',
+			bannerImage: 'https://firebasestorage.googleapis.com/v0/b/bookloopdca.firebasestorage.app/o/imagesBannerDefault%2FDefaultBannerImage.jpg?alt=media&token=ac66c60d-4248-420f-978a-e8f711859518',
 		};
 
 		await setDoc(userRef, userData);
