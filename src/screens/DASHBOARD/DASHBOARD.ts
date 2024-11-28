@@ -42,7 +42,7 @@ class Dashboard extends HTMLElement {
         userCard.setAttribute('background', dataUser.background);
         userCard.setAttribute('userpic', dataUser.userpic);
         userCard.setAttribute('name', appState.userData.name);
-        userCard.setAttribute('userName', appState.userData.userName);
+        userCard.setAttribute('userName', appState.userData.username);
         this.user.push(userCard);
 
     }
