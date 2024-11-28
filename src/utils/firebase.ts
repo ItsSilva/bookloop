@@ -353,44 +353,32 @@ export const getPostsByUser = async (uid: string) => {
 };
 
 export const addLikes = async (postId: string) => {
+	console.log('In add like fb');
+
 	try {
 		const { db } = await getFirebaseInstance();
 		const userUid = appState.userData.uid; // UID del usuario actual
+		console.log("Current userId:", userUid);
 
-		// Validate inputs
-		if (!postId) {
-			throw new Error("Post ID is required");
-		}
 		if (!userUid) {
-			throw new Error("User is not authenticated");
+			throw new Error("No user ID found in appState");
 		}
 
-		// Log the details for debugging
-		console.log("Post ID:", postId);
-		console.log("User UID:", userUid);
+		// Reference to the specific document in discover collection
+		const discoverRef = doc(db, 'posts', postId.toString());
 
-		const postRef = doc(db, 'posts', postId);
-		const postSnapshot = await getDoc(postRef);
-
-		if (postSnapshot.exists()) {
-			const postData = postSnapshot.data();
-			const likes = postData.likes || [];
-			const hasLiked = likes.includes(userUid);
-
-			if (hasLiked) {
-				await updateDoc(postRef, {
-					likes: arrayRemove(userUid),
-				});
-				return likes.length - 1;
-			} else {
-				await updateDoc(postRef, {
-					likes: arrayUnion(userUid),
-				});
-				return likes.length + 1;
-			}
-		} else {
-			throw new Error(`Post with ID ${postId} not found`);
+		// Get current document data to verify it exists
+		const docSnap = await getDoc(discoverRef);
+		if (!docSnap.exists()) {
+			throw new Error("Discover document doesn't exist");
 		}
+
+		// Update the usersid array with the new userId
+		await updateDoc(discoverRef, {
+			likes: arrayUnion(userUid)
+		});
+
+		console.log("User added to club successfully", userUid);
 	} catch (error) {
 		console.error("Error in addLikes:", error);
 		throw error;
