@@ -14,7 +14,7 @@ export const getFirebaseInstance = async () => {
 		const { getFirestore } = await import('firebase/firestore');
 		const { initializeApp } = await import('firebase/app');
 		const { getAuth } = await import('firebase/auth');
-		const { getStorage } = await import('firebase/storage');
+		const { getStorage, ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
 
 		// Your web app's Firebase configuration
 		//IMPORTANT: delete the firebaseConfig when you push to a public repository
@@ -28,7 +28,6 @@ export const getFirebaseInstance = async () => {
 	return { db, auth, storage };
 };
 
-
 export const logOut = async () => {
 	const { auth } = await getFirebaseInstance();
 	const { signOut } = await import('firebase/auth');
@@ -40,7 +39,6 @@ export const logOut = async () => {
 		console.error("Error al cerrar sesión:", error);
 	}
 };
-
 
 export const addPublications = async (product: any) => {
 	try {
@@ -141,6 +139,8 @@ export const registerUser = async (credentials: any) => {
 			name: credentials.name,
 			uid: userCredential.user.uid,
 			email: userCredential.user.email,
+			image: '',
+			bannerImage: '',
 		};
 
 		await setDoc(userRef, userData);
@@ -174,6 +174,8 @@ export const loginUser = async (email: string, password: string) => {
 				email: userData.email,
 				userName: userData.userName,
 				name: userData.name,
+				image: userData.image,
+				bannerImage: userData.bannerImage,
 			};
 
 			// Actualizar el estado de la aplicación con la información del usuario
@@ -415,3 +417,37 @@ export const updateProfile = async (userData: any) => {
 		console.error("Error updating document:", error);
 	}
 };
+
+export const upLoadFile = async (file: File, userId: string) => {
+	const { storage, db } = await getFirebaseInstance();
+	const { ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
+	const { doc, updateDoc } = await import('firebase/firestore');
+
+	const storageRef = ref(storage, 'imagesProfile/' + userId);
+	try {
+		const snapshot = await uploadBytes(storageRef, file);
+		const downloadURL = await getDownloadURL(snapshot.ref);
+
+		// Actualizar el documento del usuario en Firestore
+		const userRef = doc(db, 'users', userId);
+		await updateDoc(userRef, { image: downloadURL });
+
+		console.log('File uploaded, download URL:', downloadURL);
+		return downloadURL;
+	} catch (error) {
+		console.error('Error uploading file:', error);
+		throw error;
+	}
+};
+
+export const getFile = async (id: string) => {
+	const { storage } = await getFirebaseInstance();
+	const { ref, getDownloadURL } = await import('firebase/storage');
+	const storageRef = ref(storage, 'imagesProfile/' + id);
+	const urlImg = await getDownloadURL(ref(storageRef)).then((url) => {
+		return url;
+	}).catch((error) => {
+		console.error(error);
+	});
+	return urlImg;
+}
