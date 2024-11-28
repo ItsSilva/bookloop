@@ -172,10 +172,10 @@ export const loginUser = async (email: string, password: string) => {
 			const user = {
 				uid: userData.uid,
 				email: userData.email,
-				userName: userData.userName,
+				username: userData.userName,
 				name: userData.name,
 				image: userData.image,
-				bannerImage: userData.bannerImage,
+				bannerimage: userData.bannerImage,
 			};
 
 			// Actualizar el estado de la aplicación con la información del usuario
