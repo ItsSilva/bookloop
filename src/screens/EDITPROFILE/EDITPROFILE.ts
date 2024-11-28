@@ -1,7 +1,7 @@
-import { appState, dispatch } from '../../store/index';
+import { appState, dispatch, addObserver } from '../../store/index';
 import { navigate } from '../../store/actions';
 import { Screens } from '../../types/store';
-import { updateProfile } from '../../utils/firebase';
+import { updateProfile, upLoadFile } from '../../utils/firebase';
 
 class EditProfile extends HTMLElement {
     editedProduct: any;
@@ -9,25 +9,28 @@ class EditProfile extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
-
+        addObserver(this);
         // Asegúrate de que appState.userData tenga valores válidos
         this.editedProduct = appState.userData
             ? { ...appState.userData } // Copiar datos del usuario
-            : { uid: '', name: '', userName: '' }; // Estructura por defecto
+            : { uid: '', name: '', userName: '', Image: '', bannerImage: '' }; // Estructura por defecto
 
         this.editedProduct = {
             uid: '',
             name: '',
             userName: '',
+            image: '',
+            bannerImage: '',
         };
 
         this.changeName = this.changeName.bind(this);
         this.changeuserName = this.changeuserName.bind(this);
+        this.changeImage = this.changeImage.bind(this);
+        this.changeBannerImage = this.changeBannerImage.bind(this);
         this.submitForm = this.submitForm.bind(this);
 
         console.log("Estado inicial de appState.userData:", appState.userData);
     }
-
 
     connectedCallback() {
         if (!appState.userData) {
@@ -38,7 +41,6 @@ class EditProfile extends HTMLElement {
         this.render();
     }
 
-
     changeName(e: any) {
         const input = e.target as HTMLInputElement;
         this.editedProduct.name = input.value;
@@ -47,6 +49,16 @@ class EditProfile extends HTMLElement {
     changeuserName(e: any) {
         const input = e.target as HTMLInputElement;
         this.editedProduct.userName = input.value;
+    }
+
+    changeImage(e: any) {
+        const input = e.target as HTMLInputElement;
+        this.editedProduct.image = input.value;
+    }
+
+    changeBannerImage(e: any) {
+        const input = e.target as HTMLInputElement;
+        this.editedProduct.bannerImage = input.value;
     }
 
     async submitForm() {
@@ -64,15 +76,12 @@ class EditProfile extends HTMLElement {
         }
     }
 
-
-
     redirectToLogin() {
         dispatch(navigate(Screens.PROFILE));
     }
 
     async render() {
         if (this.shadowRoot) {
-
             const link = document.createElement('link');
             link.rel = 'stylesheet';
             link.href = '../src/screens/EDITPROFILE/EDITPROFILE.css';
@@ -94,7 +103,7 @@ class EditProfile extends HTMLElement {
             desc.innerText = ' What are we going to modify? :)';
             form.appendChild(desc);
 
-            // Form fields
+            // Form Change Name
             const pName = document.createElement('input');
             pName.placeholder = 'update your name';
             pName.className = 'form-input';
@@ -102,12 +111,30 @@ class EditProfile extends HTMLElement {
             pName.addEventListener('change', this.changeName);
             form.appendChild(pName);
 
+            // Form Change User Name
             const puserName = document.createElement('input');
             puserName.placeholder = 'update user name';
             puserName.className = 'form-input';
             puserName.required = true;
             puserName.addEventListener('change', this.changeuserName);
             form.appendChild(puserName);
+
+            // Form Change Image
+            const pImage = this.ownerDocument.createElement('input');
+            pImage.type = 'file';
+            pImage.className = 'form-input';
+            pImage.addEventListener('change', (e) => {
+                const input = e.target as HTMLInputElement;
+                const file = input.files?.[0];
+                if (file) {
+                    // Update the editedProduct with the file
+                    this.editedProduct.image = file.name;
+
+                    // Upload the file
+                    upLoadFile(file, appState.userData?.uid || '');
+                }
+            });
+            form.appendChild(pImage);
 
             // Edit button
             const save = document.createElement('button');
@@ -122,7 +149,6 @@ class EditProfile extends HTMLElement {
             profile.className = 'form-button';
             profile.addEventListener('click', this.redirectToLogin);
             form.appendChild(profile);
-
 
             container.appendChild(form);
 
