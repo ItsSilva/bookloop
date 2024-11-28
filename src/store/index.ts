@@ -26,10 +26,12 @@ const initialState: AppState = {
 	screen: 'LOGIN',
 	posts: [],
 	userData: {
-		userName: '',
+		username: '',
 		uid: '',
 		email: '',
 		name: '',
+		image: '',
+		bannerimage: '',
 	},
 	user: {},
 	cards: [],
