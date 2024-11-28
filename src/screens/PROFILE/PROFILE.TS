@@ -136,8 +136,8 @@ class Profile extends HTMLElement {
         const userBanner = this.ownerDocument.createElement('user-banner') as UserBanner;
         const firstUser = dataUsers[0]; // Assuming you want to use the first user's data
         const userInSession = appState.userData;
-        userBanner.setAttribute('background', firstUser.background);
-        userBanner.setAttribute('userpic', firstUser.userpic);
+        userBanner.setAttribute('bannerimage', userInSession.bannerimage);
+        userBanner.setAttribute('image', userInSession.image);
         userBanner.setAttribute('name', userInSession.name);
         userBanner.setAttribute('username', userInSession.username);
 
