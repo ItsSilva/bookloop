@@ -13,12 +13,12 @@ class EditProfile extends HTMLElement {
         // Asegúrate de que appState.userData tenga valores válidos
         this.editedProduct = appState.userData
             ? { ...appState.userData } // Copiar datos del usuario
-            : { uid: '', name: '', userName: '', Image: '', bannerImage: '' }; // Estructura por defecto
+            : { uid: '', name: '', username: '', Image: '', bannerImage: '' }; // Estructura por defecto
 
         this.editedProduct = {
             uid: '',
             name: '',
-            userName: '',
+            username: '',
             image: '',
             bannerImage: '',
         };
@@ -48,7 +48,7 @@ class EditProfile extends HTMLElement {
 
     changeuserName(e: any) {
         const input = e.target as HTMLInputElement;
-        this.editedProduct.userName = input.value;
+        this.editedProduct.username = input.value;
     }
 
     changeImage(e: any) {
