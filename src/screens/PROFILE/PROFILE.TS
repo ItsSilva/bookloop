@@ -158,7 +158,7 @@ class Profile extends HTMLElement {
         postContainer.className = 'post-container';
 
         const newPost = this.ownerDocument.createElement('new-post');
-        newPost.setAttribute('userpic', this.currentUserPic);
+        newPost.setAttribute('userpic', userInSession.image);
         newPost.setAttribute('text', 'Create new post');
         newPost.setAttribute('buttontext', 'Text');
         newPost.setAttribute('buttonimages', 'Images');
