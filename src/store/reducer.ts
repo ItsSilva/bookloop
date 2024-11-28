@@ -40,6 +40,15 @@ export const reducer = (currentAction: any, currentState: any) => {
 						: post
 				),
 			};
+		case Actions.REMOVELIKES:
+			return {
+				...currentState,
+				posts: currentState.posts.map((post: any) =>
+					post.uid === payload.postId
+						? { ...post, likes: payload.likeCount, liked: payload.liked }
+						: post
+				)
+			};
 		case Actions.GETUSERNAME:
 			return {
 				...currentState,
