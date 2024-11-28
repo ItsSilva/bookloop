@@ -39,8 +39,8 @@ class Dashboard extends HTMLElement {
         const dataUser = dataUsers[0];
 
         const userCard = this.ownerDocument.createElement('user-info') as UserInfo;
-        userCard.setAttribute('background', dataUser.background);
-        userCard.setAttribute('userpic', dataUser.userpic);
+        userCard.setAttribute('background', appState.userData.bannerimage);
+        userCard.setAttribute('userpic', appState.userData.image);
         userCard.setAttribute('name', appState.userData.name);
         userCard.setAttribute('userName', appState.userData.username);
         this.user.push(userCard);
