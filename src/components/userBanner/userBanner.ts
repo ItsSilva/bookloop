@@ -4,15 +4,15 @@ import { Screens } from '../../types/store';
 import { logOut } from '../../utils/firebase';
 
 export enum AttributeUserInfo {
-    'background' = 'background',
-    'userpic' = 'userpic',
+    'bannerimage' = 'bannerimage',
+    'image' = 'image',
     'name' = 'name',
     'username' = 'username',
 };
 
 class UserBanner extends HTMLElement {
-    background?: string;
-    userpic?: string;
+    bannerimage?: string;
+    image?: string;
     name?: string;
     username?: string;
 
@@ -20,8 +20,8 @@ class UserBanner extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
         addObserver(this);
-        this.background = '';
-        this.userpic = '';
+        this.bannerimage = '';
+        this.image = '';
         this.name = '';
         this.username = '';
     }
@@ -101,7 +101,7 @@ class UserBanner extends HTMLElement {
 <div class="container">
   <div class="user-info">
     <div class="user-picture">
-      <img src="${this.userpic}" alt="User Picture" />
+      <img src="${this.image}" alt="User Picture" />
     </div>
     <div class="user-details">
       <h2 class="user-name">${this.name}</h2>
@@ -121,7 +121,7 @@ class UserBanner extends HTMLElement {
   </div>
 </div>
 <div class="background-image">
-  <img src="${this.background}" alt="Background Image" />
+  <img src="${this.bannerimage}" alt="Background Image" />
 </div>
 </section>
         `;
