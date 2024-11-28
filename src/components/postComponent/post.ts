@@ -115,34 +115,31 @@ class Post extends HTMLElement {
             likeButton.addEventListener('click', async (e) => {
                 e.stopPropagation();
 
+                console.log('click en', this.uid);
+
+
                 if (!this.uid) {
                     console.error("Post UID is missing!");
                     return;
                 }
 
-                // Optimistic UI update
-                this.liked = !this.liked;
-                this.likes += this.liked ? 1 : -1;
                 likeButton.innerHTML = `<i class="${this.liked ? 'fas fa-heart' : 'far fa-heart'}"></i> ${this.likes}`;
 
                 try {
-                    const userId = appState.userData?.uid;
+                    console.log('appstate id en post', appState);
+                    console.log('user id en post', appState.userData.uid);
+
+                    const userId = appState.userData.uid;
                     if (!userId) {
                         throw new Error("User ID not found in appState!");
                     }
 
                     // Update likes in Firebase
                     const updatedLikes = await addLikes(this.uid); // Pasamos el ID del post, no el userId
-                    this.likes = updatedLikes;
+                    return updatedLikes
 
-                    // Dispatch action
-                    dispatch(addLikesAction(this.uid, this.liked));
                 } catch (error) {
                     console.error("Error updating likes:", error);
-
-                    // Revert optimistic UI update
-                    this.liked = !this.liked;
-                    this.likes += this.liked ? 1 : -1;
                     likeButton.innerHTML = `<i class="${this.liked ? 'fas fa-heart' : 'far fa-heart'}"></i> ${this.likes}`;
                 }
             });
