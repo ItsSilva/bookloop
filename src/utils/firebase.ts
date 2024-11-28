@@ -451,3 +451,37 @@ export const getFile = async (id: string) => {
 	});
 	return urlImg;
 }
+
+export const upLoadFileBanner = async (file: File, userId: string) => {
+	const { storage, db } = await getFirebaseInstance();
+	const { ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
+	const { doc, updateDoc } = await import('firebase/firestore');
+
+	const storageRef = ref(storage, 'imagesBanner/' + userId);
+	try {
+		const snapshot = await uploadBytes(storageRef, file);
+		const downloadURL = await getDownloadURL(snapshot.ref);
+
+		// Actualizar el documento del usuario en Firestore
+		const userRef = doc(db, 'users', userId);
+		await updateDoc(userRef, { bannerImage: downloadURL });
+
+		console.log('File uploaded, download URL:', downloadURL);
+		return downloadURL;
+	} catch (error) {
+		console.error('Error uploading file:', error);
+		throw error;
+	}
+};
+
+export const getFileBanner = async (id: string) => {
+	const { storage } = await getFirebaseInstance();
+	const { ref, getDownloadURL } = await import('firebase/storage');
+	const storageRef = ref(storage, 'imagesBanner/' + id);
+	const urlImg = await getDownloadURL(ref(storageRef)).then((url) => {
+		return url;
+	}).catch((error) => {
+		console.error(error);
+	});
+	return urlImg;
+}
