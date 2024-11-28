@@ -7,14 +7,14 @@ export enum AttributeUserInfo {
     'background' = 'background',
     'userpic' = 'userpic',
     'name' = 'name',
-    'userName' = 'userName',
+    'username' = 'username',
 };
 
 class UserInfo extends HTMLElement {
     background?: string;
     userpic?: string;
     name?: string;
-    userName?: string;
+    username?: string;
 
     constructor() {
         super();
@@ -23,7 +23,7 @@ class UserInfo extends HTMLElement {
         this.background = '';
         this.userpic = '';
         this.name = '';
-        this.userName = '';
+        this.username = '';
     }
 
     static get observedAttributes() {
@@ -96,7 +96,7 @@ class UserInfo extends HTMLElement {
             containerText.appendChild(nameElement);
 
             const atElement = this.ownerDocument.createElement('p');
-            atElement.textContent = this.userName || 'No user name';
+            atElement.textContent = this.username || 'No user name';
             containerText.appendChild(atElement);
 
             this.shadowRoot.appendChild(container);
