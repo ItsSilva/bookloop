@@ -95,13 +95,17 @@ class Dashboard extends HTMLElement {
 
             container.innerHTML = '';
 
+
             appState.posts.forEach((dataPost: any) => {
                 // console.log("Processing post data:", dataPost);
+                console.log('POST', dataPost);
+
                 const post = this.ownerDocument.createElement('post-component') as Post;
                 post.setAttribute(Attribute2.clubpic, dataPost.imageUrl);
                 post.setAttribute(Attribute2.clubname, dataPost.name);
                 post.setAttribute(Attribute2.image, dataPost.imageUrl);
-                post.setAttribute(Attribute2.likes, dataPost.likes);
+                post.setAttribute(Attribute2.likes, dataPost.likes.length);
+                post.setAttribute(Attribute2.uid, dataPost.id);
                 // post.setAttribute(Attribute2.comments, dataPost.comments);
                 post.setAttribute(Attribute2.author, dataPost.name);
                 post.setAttribute(Attribute2.desc, dataPost.caption);
