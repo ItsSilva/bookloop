@@ -450,7 +450,7 @@ export const updateProfile = async (userData: any) => {
 		const docRef = doc(db, 'users', userData.uid); // Usa el UID como referencia
 		const updatedData = {
 			name: userData.name,
-			userName: userData.userName,
+			username: userData.username,
 		};
 		await updateDoc(docRef, updatedData);
 	} catch (error) {
