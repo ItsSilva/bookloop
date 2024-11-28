@@ -1,7 +1,7 @@
 import '../postPopUp/postPopUp'
 import PostPopUp, { Attribute3 } from '../../components/postPopUp/postPopUp';
-import { addLikes } from '../../utils/firebase';
-import { addLikesAction } from '../../store/actions';
+import { userHasLikedPost } from '../../utils/firebase';
+import { addLikesAction, removeLikesAction } from '../../store/actions';
 import { dispatch, appState, addObserver } from '../../store';
 
 export enum Attribute2 {
@@ -115,29 +115,25 @@ class Post extends HTMLElement {
             likeButton.addEventListener('click', async (e) => {
                 e.stopPropagation();
 
-                console.log('click en', this.uid);
-
-
                 if (!this.uid) {
                     console.error("Post UID is missing!");
                     return;
                 }
 
-                likeButton.innerHTML = `<i class="${this.liked ? 'fas fa-heart' : 'far fa-heart'}"></i> ${this.likes}`;
-
                 try {
-                    console.log('appstate id en post', appState);
-                    console.log('user id en post', appState.userData.uid);
+                    // Check if the user has already liked the post
+                    const userLikedPost = await userHasLikedPost(this.uid);
 
-                    const userId = appState.userData.uid;
-                    if (!userId) {
-                        throw new Error("User ID not found in appState!");
+                    if (userLikedPost) {
+                        // The user has already liked, remove the like
+                        await removeLikesAction(this.uid, userLikedPost);
+                    } else {
+                        // The user has not liked, add the like
+                        await addLikesAction(this.uid, userLikedPost);
                     }
 
-                    // Update likes in Firebase
-                    const updatedLikes = await addLikes(this.uid); // Pasamos el ID del post, no el userId
-                    return updatedLikes
-
+                    // Update likes button status
+                    likeButton.innerHTML = `<i class="${userLikedPost ? 'fas fa-heart' : 'far fa-heart'}"></i> ${this.likes}`;
                 } catch (error) {
                     console.error("Error updating likes:", error);
                     likeButton.innerHTML = `<i class="${this.liked ? 'fas fa-heart' : 'far fa-heart'}"></i> ${this.likes}`;
