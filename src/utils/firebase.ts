@@ -378,13 +378,65 @@ export const addLikes = async (postId: string) => {
 			likes: arrayUnion(userUid)
 		});
 
-		console.log("User added to club successfully", userUid);
+		console.log("Like added to the post successfully", userUid);
 	} catch (error) {
 		console.error("Error in addLikes:", error);
 		throw error;
 	}
 };
 
+export const removeLikes = async (postId: string) => {
+	try {
+		const { db } = await getFirebaseInstance();
+		const userUid = appState.userData.uid; // UID del usuario actual
+
+		if (!userUid) {
+			throw new Error("No user ID found in appState");
+		}
+
+		// Reference to the specific document in the posts collection
+		const postRef = doc(db, 'posts', postId);
+
+		// Get the data of the current document to verify that it exists
+		const postDoc = await getDoc(postRef);
+		if (!postDoc.exists()) {
+			throw new Error("El post no existe");
+		}
+
+		// Remove user ID from likes array
+		await updateDoc(postRef, {
+			likes: arrayRemove(userUid)
+		});
+
+		console.log("Like eliminado del post con éxito", userUid);
+	} catch (error) {
+		console.error("Error al eliminar el like:", error);
+		throw error;
+	}
+};
+
+export const userHasLikedPost = async (postId: string): Promise<boolean> => {
+	try {
+		const { db } = await getFirebaseInstance();
+		const userUid = appState.userData.uid;
+
+		if (!userUid) {
+			throw new Error("No user ID found in appState");
+		}
+
+		// Reference to the specific document in the posts collection
+		const postRef = doc(db, 'posts', postId);
+
+		// Get current document data
+		const postDoc = await getDoc(postRef);
+
+		// Check if the user ID is present in the likes array
+		return (postDoc.data()?.likes as string[]).includes(userUid);
+	} catch (error) {
+		console.error("Error checking if user has liked post:", error);
+		return false;
+	}
+};
 
 export const updateProfile = async (userData: any) => {
 	try {
