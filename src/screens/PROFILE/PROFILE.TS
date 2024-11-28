@@ -139,7 +139,7 @@ class Profile extends HTMLElement {
         userBanner.setAttribute('background', firstUser.background);
         userBanner.setAttribute('userpic', firstUser.userpic);
         userBanner.setAttribute('name', userInSession.name);
-        userBanner.setAttribute('userName', userInSession.userName);
+        userBanner.setAttribute('username', userInSession.username);
 
         const container = this.ownerDocument.createElement('section');
         container.className = 'container';
