@@ -1,7 +1,7 @@
 import { appState, dispatch, addObserver } from '../../store/index';
 import { navigate } from '../../store/actions';
 import { Screens } from '../../types/store';
-import { updateProfile, upLoadFile } from '../../utils/firebase';
+import { updateProfile, upLoadFile, upLoadFileBanner } from '../../utils/firebase';
 
 class EditProfile extends HTMLElement {
     editedProduct: any;
@@ -121,6 +121,7 @@ class EditProfile extends HTMLElement {
 
             // Form Change Image
             const pImage = this.ownerDocument.createElement('input');
+            pImage.placeholder = 'update your image';
             pImage.type = 'file';
             pImage.className = 'form-input';
             pImage.addEventListener('change', (e) => {
@@ -135,6 +136,25 @@ class EditProfile extends HTMLElement {
                 }
             });
             form.appendChild(pImage);
+
+            // Form Change Banner Image
+            const pBannerImage = this.ownerDocument.createElement('input');
+            pBannerImage.placeholder = 'update your banner image';
+            pBannerImage.type = 'file';
+            pBannerImage.className = 'form-input';
+            pBannerImage.addEventListener('change', (e) => {
+                const input = e.target as HTMLInputElement;
+                const file = input.files?.[0];
+                if (file) {
+                    // Update the editedProduct with the file
+                    this.editedProduct.bannerImage = file.name;
+
+                    // Upload the file
+                    upLoadFileBanner(file, appState.userData?.uid || '');
+                }
+            });
+            form.appendChild(pBannerImage);
+
 
             // Edit button
             const save = document.createElement('button');
