@@ -98,7 +98,7 @@ class Dashboard extends HTMLElement {
 
             appState.posts.forEach((dataPost: any) => {
                 // console.log("Processing post data:", dataPost);
-                console.log('POST', dataPost);
+                // console.log('POST', dataPost);
 
                 const post = this.ownerDocument.createElement('post-component') as Post;
                 post.setAttribute(Attribute2.clubpic, dataPost.imageUrl);
