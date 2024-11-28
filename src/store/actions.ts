@@ -1,6 +1,6 @@
 import { dispatch } from '../store';
 import { Actions, Screens } from '../types/store';
-import { getDiscoverCards, getClubsCards, addClubsCards, getUserName, removeClubsCards, getPosts, addLikes, updateProfile } from '../utils/firebase';
+import { getDiscoverCards, getClubsCards, addClubsCards, getUserName, removeClubsCards, getPosts, addLikes, updateProfile, removeLikes, userHasLikedPost } from '../utils/firebase';
 
 export const navigate = (screen: Screens) => {
     return {
@@ -112,11 +112,11 @@ export const getPostsAction = async () => {
 
 export const addLikesAction = async (postId: string, liked: boolean) => {
     try {
-        const likeCount = await addLikes(postId); // Pasamos directamente el postId
+        const likeCount = await addLikes(postId);
         dispatch({
             type: Actions.ADDLIKES,
             payload: {
-                postId, // Cambiamos userId por postId para que coincida con el reducer
+                postId,
                 likeCount,
                 liked,
             },
@@ -124,6 +124,24 @@ export const addLikesAction = async (postId: string, liked: boolean) => {
         return true;
     } catch (error) {
         console.error("Error in addLikesAction:", error);
+        return false;
+    }
+};
+
+export const removeLikesAction = async (postId: string, liked: boolean) => {
+    try {
+        const likeCount = await removeLikes(postId);
+        dispatch({
+            type: Actions.REMOVELIKES,
+            payload: {
+                postId,
+                likeCount,
+                liked: !liked
+            }
+        });
+        return true;
+    } catch (error) {
+        console.error("Error in removeLikesAction:", error);
         return false;
     }
 };
