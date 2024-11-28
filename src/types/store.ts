@@ -4,10 +4,12 @@ export type AppState = {
 	screen: string;
 	posts: [];
 	userData: {
-		userName: string;
+		username: string;
 		uid: string;
 		email: string;
 		name: string;
+		image: string;
+		bannerimage: string;
 	};
 	cards: any[],
 	clubs: any[],
