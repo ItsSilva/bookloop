@@ -108,7 +108,7 @@ class EditProfile extends HTMLElement {
 
             // Form Change Name
             const pName = document.createElement('input');
-            pName.placeholder = 'update your name';
+            pName.placeholder = 'Update your name';
             pName.className = 'form-input';
             pName.required = true;
             pName.addEventListener('change', this.changeName);
@@ -116,7 +116,7 @@ class EditProfile extends HTMLElement {
 
             // Form Change User Name
             const puserName = document.createElement('input');
-            puserName.placeholder = 'update user name';
+            puserName.placeholder = 'Update user name';
             puserName.className = 'form-input';
             puserName.required = true;
             puserName.addEventListener('change', this.changeuserName);
@@ -124,7 +124,7 @@ class EditProfile extends HTMLElement {
 
             // Form Change Image
             const pImage = this.ownerDocument.createElement('input');
-            pImage.placeholder = 'update your image';
+            pImage.placeholder = 'Update your image';
             pImage.type = 'file';
             pImage.className = 'form-input';
             pImage.addEventListener('change', (e) => {
