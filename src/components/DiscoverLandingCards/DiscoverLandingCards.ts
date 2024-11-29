@@ -35,8 +35,8 @@ class DiscoverLandingCards extends HTMLElement {
         this.name = '';
         this.members = '';
         this.button = '';
-        
-        
+
+
     }
 
     connectedCallback() {
@@ -66,12 +66,12 @@ class DiscoverLandingCards extends HTMLElement {
             name.className = 'name';
             name.textContent = this.name || 'No name found';
             card.appendChild(name);
-            
+
             const bgColor = this.getAttribute('bg-color');
             if (bgColor) {
                 name.style.setProperty('--banner-bg-color', bgColor);
             }
-            
+
             const members = this.ownerDocument.createElement('p');
             members.className = 'members';
             members.textContent = this.members || 'No members found';
@@ -79,9 +79,8 @@ class DiscoverLandingCards extends HTMLElement {
 
             const button = this.ownerDocument.createElement('button');
             button.textContent = this.button || 'Remove';
-            console.log('btn', this.button);
             button.className = 'button';
-            
+
             if (this.button === 'Remove') {
                 button.style.backgroundColor = '#ff4444';
                 button.addEventListener('click', async (e) => {
@@ -90,16 +89,13 @@ class DiscoverLandingCards extends HTMLElement {
                         console.error("No uid found for card");
                         return;
                     }
-                    console.log("Remove button clicked for uid:", this.uid);
                     button.disabled = true;
                     button.textContent = 'Removing...';
-                    
+
                     try {
                         const success = await this.removeFromClubs();
                         if (success) {
                             // the card will be deleted when the status is updated
-                            console.log("Successfully removed from clubs");
-
                         } else {
                             button.disabled = false;
                             button.textContent = 'Add';
@@ -117,10 +113,9 @@ class DiscoverLandingCards extends HTMLElement {
                         console.error("No uid found for card");
                         return;
                     }
-                    console.log("Join button clicked for uid:", this.uid);
                     button.disabled = true;
                     button.textContent = 'Adding...';
-                    
+
                     try {
                         const success = await this.addToClubsLanding();
                         if (success) {
@@ -136,7 +131,7 @@ class DiscoverLandingCards extends HTMLElement {
                     }
                 });
             }
-            
+
             card.appendChild(button);
             this.shadowRoot.appendChild(card);
         }
@@ -145,29 +140,27 @@ class DiscoverLandingCards extends HTMLElement {
     async addToClubsLanding() {
         try {
             const userId = appState.user;
-            console.log("Current userId:", userId);
-    
+
             if (!userId) {
                 console.error("No user ID found in appState");
                 return false;
             }
-    
+
             if (!this.uid) {
                 console.error("No uid found for card");
                 return false;
             }
-    
+
             const clubData = {
                 uid: this.uid,
                 image: this.image || '',
                 name: this.name || '',
                 members: this.members || '',
             };
-    
-            console.log("Attempting to add club with data:", clubData);
+
             const success = await addClubForUser(clubData);
             return success;
-    
+
         } catch (error) {
             console.error("Error in addToClubsLanding:", error);
             return false;
@@ -177,26 +170,24 @@ class DiscoverLandingCards extends HTMLElement {
     async removeFromClubs() {
         try {
             const userId = appState.user;
-            console.log("Current userId:", userId);
-    
+
             if (!userId) {
                 console.error("No user ID found in appState");
                 return false;
             }
-    
+
             if (!this.uid) {
                 console.error("No uid found for card");
                 return false;
             }
-    
+
             const clubData = {
                 uid: this.uid,
             };
-    
-            console.log("Attempting to remove club with data:", clubData);
+
             const success = await removeClubForUser(clubData);
             return success;
-    
+
         } catch (error) {
             console.error("Error in removeFromClubs:", error);
             return false;
