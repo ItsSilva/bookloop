@@ -83,7 +83,7 @@ export class clubInfo extends HTMLElement {
             const button = this.ownerDocument.createElement('button');
             button.textContent = this.button || 'Join';
             button.className = 'clubs--info__button';
-            
+
             if (this.button === 'Remove') {
                 button.style.backgroundColor = '#ff4444';
                 button.addEventListener('click', async (e) => {
@@ -92,14 +92,12 @@ export class clubInfo extends HTMLElement {
                         console.error("No uid found for club");
                         return;
                     }
-                    console.log("Remove button clicked for uid:", this.uid);
                     button.disabled = true;
                     button.textContent = 'Removing...';
-                    
+
                     try {
                         const success = await this.removeFromClubs();
                         if (success) {
-                            console.log("Successfully removed from clubs");
                         } else {
                             button.disabled = false;
                             button.textContent = 'Add';
@@ -116,10 +114,9 @@ export class clubInfo extends HTMLElement {
                         console.error("No uid found for club");
                         return;
                     }
-                    console.log("Join button clicked for uid:", this.uid);
                     button.disabled = true;
                     button.textContent = 'Adding...';
-                    
+
                     try {
                         const success = await this.addToClubsLanding();
                         if (success) {
@@ -142,32 +139,29 @@ export class clubInfo extends HTMLElement {
         }
     }
 
-        async addToClubsLanding() {
+    async addToClubsLanding() {
         try {
             const userId = appState.user;
-            console.log("Current userId:", userId);
-    
             if (!userId) {
                 console.error("No user ID found in appState");
                 return false;
             }
-    
+
             if (!this.uid) {
                 console.error("No uid found for card");
                 return false;
             }
-    
+
             const clubData = {
                 uid: this.uid,
                 image: this.image || '',
                 name: this.name || '',
                 members: this.members || '',
             };
-    
-            console.log("Attempting to add club with data:", clubData);
+
             const success = await addClubForUser(clubData);
             return success;
-    
+
         } catch (error) {
             console.error("Error in addToClubsLanding:", error);
             return false;
@@ -177,26 +171,24 @@ export class clubInfo extends HTMLElement {
     async removeFromClubs() {
         try {
             const userId = appState.user;
-            console.log("Current userId:", userId);
-    
+
             if (!userId) {
                 console.error("No user ID found in appState");
                 return false;
             }
-    
+
             if (!this.uid) {
                 console.error("No uid found for card");
                 return false;
             }
-    
+
             const clubData = {
                 uid: this.uid,
             };
-    
-            console.log("Attempting to remove club with data:", clubData);
+
             const success = await removeClubForUser(clubData);
             return success;
-    
+
         } catch (error) {
             console.error("Error in removeFromClubs:", error);
             return false;
