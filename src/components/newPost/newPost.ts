@@ -61,8 +61,7 @@ class NewPost extends HTMLElement {
 
         try {
             await savePost(caption, file);
-            console.log('Post saved');
-            
+
         } catch (error) {
             console.error("Error al publicar:", error);
         }
