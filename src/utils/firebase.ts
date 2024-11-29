@@ -8,6 +8,62 @@ let db: any;
 let auth: any;
 let storage: any;
 
+export const restoreUserDataFromStorage = async () => {
+	try {
+		// Primero, obtener los datos almacenados en sessionStorage
+		const storedUserData = sessionStorage.getItem('userData');
+
+		if (storedUserData) {
+			const storedUser = JSON.parse(storedUserData);
+
+			// Importar las funciones necesarias de Firestore
+			const { doc, getDoc } = await import('firebase/firestore');
+			const { auth } = await getFirebaseInstance();
+
+			// Verificar si hay un usuario autenticado
+			if (auth.currentUser) {
+				// Crear una referencia al documento del usuario
+				const userRef = doc(db, 'users', auth.currentUser.uid);
+
+				// Obtener los datos más recientes del usuario desde Firestore
+				const userDoc = await getDoc(userRef);
+
+				if (userDoc.exists()) {
+					const latestUserData = userDoc.data();
+
+					// Crear un objeto de usuario actualizado
+					const updatedUser = {
+						uid: latestUserData.uid,
+						email: latestUserData.email,
+						username: latestUserData.userName,
+						name: latestUserData.name,
+						image: latestUserData.image,
+						bannerimage: latestUserData.bannerImage,
+					};
+
+					// Actualizar sessionStorage con los datos más recientes
+					sessionStorage.setItem('userData', JSON.stringify(updatedUser));
+
+					// Actualizar el estado de la aplicación
+					dispatch(setUserData(updatedUser));
+
+					console.log('User data updated from Firestore');
+				} else {
+					// Si el documento no existe, mantener los datos almacenados
+					dispatch(setUserData(storedUser));
+				}
+			} else {
+				// Si no hay usuario autenticado, usar los datos almacenados
+				dispatch(setUserData(storedUser));
+			}
+		}
+	} catch (error) {
+		console.error('Error restoring user data:', error);
+		// Limpiar sessionStorage en caso de error
+		sessionStorage.removeItem('userData');
+	}
+};
+
 export const getFirebaseInstance = async () => {
 	if (!db) {
 		const { firebaseConfig } = await import('./firebase.config');
@@ -16,14 +72,13 @@ export const getFirebaseInstance = async () => {
 		const { getAuth } = await import('firebase/auth');
 		const { getStorage, ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
 
-		// Your web app's Firebase configuration
-		//IMPORTANT: delete the firebaseConfig when you push to a public repository
-		//firebaseConfig is in the .gitignore file
-
 		const app = initializeApp(firebaseConfig);
 		db = getFirestore(app);
 		auth = getAuth(app);
 		storage = getStorage(app)
+
+		// Llamar a la función para restaurar datos con la capacidad de actualizar
+		await restoreUserDataFromStorage();
 	}
 	return { db, auth, storage };
 };
@@ -160,13 +215,10 @@ export const loginUser = async (email: string, password: string) => {
 		const { doc, getDoc } = await import('firebase/firestore');
 		const { auth } = await getFirebaseInstance();
 		const { signInWithEmailAndPassword, setPersistence, browserLocalPersistence } = await import('firebase/auth');
-
 		await setPersistence(auth, browserLocalPersistence);
 		const userCredential = await signInWithEmailAndPassword(auth, email, password);
-
 		const userRef = doc(db, 'users', auth.currentUser.uid);
 		const userDoc = await getDoc(userRef);
-
 		if (userDoc.exists()) {
 			const userData = userDoc.data();
 			const user = {
@@ -177,11 +229,12 @@ export const loginUser = async (email: string, password: string) => {
 				image: userData.image,
 				bannerimage: userData.bannerImage,
 			};
+			// Guardar userData en sessionStorage
+			sessionStorage.setItem('userData', JSON.stringify(user));
 
 			// Actualizar el estado de la aplicación con la información del usuario
 			dispatch(setUserData(user));
 			console.log('Usuario log', appState.userData);
-
 			return userCredential; // Devuelve el resultado para manejar en el frontend
 		}
 	} catch (error) {
