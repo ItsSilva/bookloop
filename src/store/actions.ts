@@ -35,7 +35,6 @@ export const getDiscoverCardsAction = async () => {
 export const getClubsAction = async () => {
     try {
         const clubs = await getClubsCards();
-        console.log("Retrieved clubs:", clubs);
         return {
             action: Actions.GETCLUBSARDSACTION,
             payload: clubs,
@@ -48,13 +47,11 @@ export const getClubsAction = async () => {
 
 export const removeClubForUser = async (clubData: any) => {
     try {
-        console.log("Removing user from club:", clubData);
         const success = await removeClubsCards(clubData);
 
         if (success) {
             // Get updated clubs after removing
             const updatedClubs = await getClubsCards();
-            console.log("Updated clubs after removal:", updatedClubs);
 
             dispatch({
                 action: Actions.GETCLUBSARDSACTION,
@@ -71,12 +68,10 @@ export const removeClubForUser = async (clubData: any) => {
 
 export const addClubForUser = async (clubData: any) => {
     try {
-        console.log("Adding user to club:", clubData);
         const success = await addClubsCards(clubData);
 
         if (success) {
             // Get updated clubs after adding
-            console.log("Updated clubs after adding:", success);
 
             dispatch({
                 action: Actions.GETCLUBSARDSACTION,
@@ -101,9 +96,6 @@ export const getUserNameAction = async () => {
 
 export const getPostsAction = async () => {
     const posts = await getPosts();
-    console.log('trayendo post in action', posts);
-
-
     return {
         action: Actions.GETPOSTS,
         payload: posts,
