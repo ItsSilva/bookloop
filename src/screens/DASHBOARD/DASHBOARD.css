@@ -41,7 +41,7 @@
 }
 
 /* .post-container.expanded {
-    width: 100%;
+  width: 100%;
 } */
 
 .container.full-width {
@@ -64,7 +64,7 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-@media (max-width: 500px) {
+@media (max-width: 767px) {
   .user-container {
     background-color: #6d413f;
     border-radius: 15px 15px 0 0;
@@ -84,14 +84,6 @@
     flex-direction: column;
     gap: 2rem;
   }
-}
-
-@media (max-width: 767px) {
-  .user-container,
-  .clubs-container {
-    display: none;
-  }
-
   .post-container {
     width: 100%;
   }
