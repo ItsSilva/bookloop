@@ -21,14 +21,14 @@ import Banner, { AttributeBanner } from '../../components/banner/banner';
 
 class DiscoverLanding extends HTMLElement {
     user: UserInfo[] = [];
-    currentUserPic: string = '';
+    // currentUserPic: string = '';
 
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
         addObserver(this);
 
-        this.currentUserPic = dataUsers[0].userpic;
+        // this.currentUserPic = dataUsers[0].userpic;
         const dataUser = dataUsers[0];
 
         const userCard = this.ownerDocument.createElement('user-info') as UserInfo;
@@ -41,7 +41,6 @@ class DiscoverLanding extends HTMLElement {
     }
 
     async connectedCallback() {
-        // Cargar las tarjetas de discover si no están cargadas
         if (appState.cards.length === 0) {
             const action = await getDiscoverCardsAction();
             if (action) {
@@ -53,7 +52,6 @@ class DiscoverLanding extends HTMLElement {
 
     async renderDiscoverCards(container: HTMLElement) {
         if (!appState.cards || !Array.isArray(appState.cards)) {
-            console.log("No discover cards available");
             return;
         }
 
