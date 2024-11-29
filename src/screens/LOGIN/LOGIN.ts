@@ -36,7 +36,6 @@ class Login extends HTMLElement {
 			localStorage.setItem('user', JSON.stringify(result.user));
 			dispatch(navigate(Screens.DASHBOARD));
 		} else {
-			console.log("Error logging in");
 		}
 	}
 

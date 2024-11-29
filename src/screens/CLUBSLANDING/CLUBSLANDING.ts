@@ -20,14 +20,14 @@ import Banner, { AttributeBanner } from '../../components/banner/banner';
 
 class ClubsLanding extends HTMLElement {
     user: UserInfo[] = [];
-    currentUserPic: string = '';
+    // currentUserPic: string = '';
 
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
         addObserver(this);
 
-        this.currentUserPic = dataUsers[0].userpic;
+        // this.currentUserPic = dataUsers[0].userpic;
         const dataUser = dataUsers[0];
 
         const userCard = this.ownerDocument.createElement('user-info') as UserInfo;
@@ -40,7 +40,6 @@ class ClubsLanding extends HTMLElement {
     }
 
     async connectedCallback() {
-        console.log('Clubs', appState.cards);
         try {
             if (!appState.cards || appState.cards.length === 0) {
                 const action = await getDiscoverCardsAction();
@@ -67,7 +66,6 @@ class ClubsLanding extends HTMLElement {
             container.innerHTML = '';
 
             if (!Array.isArray(appState.cards)) {
-                console.log("No discover cards found in appState");
                 this.renderEmptyState(container);
                 return;
             }
@@ -153,9 +151,6 @@ class ClubsLanding extends HTMLElement {
     render() {
         if (this.shadowRoot) {
             this.shadowRoot.innerHTML = '';
-
-            console.log('Clubs', appState.cards);
-
 
             const link = document.createElement('link');
             link.rel = 'stylesheet';

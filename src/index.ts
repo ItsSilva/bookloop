@@ -81,7 +81,6 @@ class AppContainer extends HTMLElement {
 				default:
 					break;
 			}
-			console.log('Current screen:', appState.screen);
 		}
 	}
 }
