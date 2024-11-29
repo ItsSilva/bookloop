@@ -32,27 +32,30 @@ class Login extends HTMLElement {
 
 	async submitForm() {
 		const result = await loginUser(credentials.email, credentials.password);
-    if (result) {
-        localStorage.setItem('user', JSON.stringify(result.user));
-        dispatch(navigate(Screens.DASHBOARD));
-    } else {
-        console.log("Error logging in");
-    }
+		if (result) {
+			localStorage.setItem('user', JSON.stringify(result.user));
+			dispatch(navigate(Screens.DASHBOARD));
+		} else {
+			console.log("Error logging in");
+		}
 	}
-	
+
 	redirectToRegister() {
 		dispatch(navigate(Screens.REGISTER));
 	}
 
 	async render() {
 		if (this.shadowRoot) {
-			this.shadowRoot.innerHTML = 
-			`<link rel="stylesheet" href="../src/screens/LOGIN/LOGIN.css">`;
-			
+			this.shadowRoot.innerHTML =
+				`<link rel="stylesheet" href="../src/screens/LOGIN/LOGIN.css">`;
+
 			const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = '../src/screens/LOGIN/LOGIN.css';
-            this.shadowRoot.appendChild(link);
+			link.rel = 'stylesheet';
+			link.href = '../src/screens/LOGIN/LOGIN.css';
+			this.shadowRoot.appendChild(link);
+
+			const centerContainer = document.createElement('div');
+			centerContainer.className = 'center-container';
 
 			const container = document.createElement('section');
 			container.className = 'form-container';
@@ -61,7 +64,7 @@ class Login extends HTMLElement {
 			title.className = 'form-title';
 			title.innerText = 'Hello again!';
 			this.shadowRoot.appendChild(title);
-			
+
 
 			const desc = this.ownerDocument.createElement('p');
 			desc.className = 'form-desc';
@@ -82,7 +85,7 @@ class Login extends HTMLElement {
 			pPassword.required = true;
 			pPassword.addEventListener('change', this.changePassword);
 
-			
+
 			const redirec = this.ownerDocument.createElement('h4');
 			redirec.className = 'form-redirec';
 			redirec.innerText = 'Not a member? Register now!';
@@ -105,8 +108,9 @@ class Login extends HTMLElement {
 
 
 			container.appendChild(form)
+			centerContainer.appendChild(container);
 
-			this.shadowRoot.appendChild(container);
+			this.shadowRoot.appendChild(centerContainer);
 		}
 	}
 }
