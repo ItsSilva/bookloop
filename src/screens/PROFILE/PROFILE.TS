@@ -30,15 +30,13 @@ import { Screens } from '../../types/store';
 class Profile extends HTMLElement {
   user: UserInfo[] = [];
   post: Post[] = [];
-  currentUserPic: string = '';
+  // currentUserPic: string = '';
 
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
     addObserver(this);
-
-    this.currentUserPic = dataUsers[0].userpic;
-
+    // this.currentUserPic = dataUsers[0].userpic;
   }
 
   async connectedCallback() {
@@ -50,29 +48,16 @@ class Profile extends HTMLElement {
       }
     }
 
-    console.log('Dashboard cards', appState.cards.length);
-    console.log('Dashboard post', appState.posts.length);
-
-
-
     if (appState.posts.length != 0) {
-
     } else {
-      console.log('Dashboard quantity', appState.posts.length);
-
       const action = await getPostsAction();
       dispatch(action);
-      console.log('post in appstate', appState.posts);
-
     }
-
-
     this.render();
   }
 
   async renderDiscoverCards(container: HTMLElement) {
     if (!appState.cards || !Array.isArray(appState.cards)) {
-      console.log("No discover cards available");
       return;
     }
   }
@@ -93,12 +78,10 @@ class Profile extends HTMLElement {
       );
 
       if (userPosts.length === 0) {
-        console.log("No posts found for the current user");
         return;
       }
 
       userPosts.forEach((dataPost: any) => {
-        // console.log("Processing post data:", dataPost);
         const post = this.ownerDocument.createElement('post-component') as Post;
         post.setAttribute(Attribute2.clubpic, dataPost.imageUrl);
         post.setAttribute(Attribute2.clubname, dataPost.name);
