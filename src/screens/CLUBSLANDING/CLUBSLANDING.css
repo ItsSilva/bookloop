@@ -58,7 +58,7 @@
   padding: 1.5rem 0 1.5rem 0;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 767px) {
   .user-container {
     background-color: #6d413f;
     border-radius: 15px 15px 0 0;
@@ -71,7 +71,6 @@
     margin: 0;
     z-index: 1;
   }
-
   .user-container user-menu {
     width: 100%;
   }
@@ -82,14 +81,9 @@
   .discover-card-container {
     justify-content: center;
   }
-}
-
-@media (max-width: 767px) {
-  .user-container,
   .clubs-container {
     display: none;
   }
-
   .post-container {
     width: 100%;
   }
