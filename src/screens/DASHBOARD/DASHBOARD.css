@@ -1,38 +1,43 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 .container {
-    display: flex;
-    gap: 3rem;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
+}
+
+.container > section {
+  padding: 0 10px;
 }
 
 .user-container {
-    display: flex;
-    flex-direction: column;
-    width: 20%;
-    gap: 1.5rem;
-    padding: 0 0 0 1rem;
-    transition: transform 0.3s ease;
-    margin-left: 2rem;
+  display: flex;
+  flex-direction: column;
+  width: 25%;
+  gap: 1.5rem;
+  transition: transform 0.3s ease;
 }
 
 .post-container {
-    display: flex;
-    flex-direction: column;
-    width: 45%;
-justify-content: center;
+  display: flex;
+  width: 50%;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.clubs-container {
+  width: 25%;
 }
 
 .user-container.hidden {
-    transform: translateX(-100%);
+  transform: translateX(-100%);
 }
 
 .hidden {
-    display: none;
+  display: none;
 }
 
 /* .post-container.expanded {
@@ -40,43 +45,54 @@ justify-content: center;
 } */
 
 .container.full-width {
-    width: 100%;
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 2rem;
-    padding: 0 1.5rem 0 1.5rem;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 2rem;
+  padding: 0 1.5rem 0 1.5rem;
 }
 
-.clubs-container div{
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    background-color: #F9F5F3;
-    border-radius: 10px;
-    width: 100%;
-    padding: 1rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+.clubs-container div {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background-color: #f9f5f3;
+  border-radius: 10px;
+  width: 100%;
+  padding: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 @media (max-width: 500px) {
-    .user-container {
-        background-color: #6D413F;
-        border-radius: 15px 15px 0 0;
-        align-items: center;
-        position: fixed;
-        bottom: 0;
-        width: 100%;   
-        padding: 20px;
-        flex-direction: row-reverse;
-        margin: 0;
-    }
+  .user-container {
+    background-color: #6d413f;
+    border-radius: 15px 15px 0 0;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    padding: 20px;
+    flex-direction: row-reverse;
+    margin: 0;
+  }
 
-    .user-container user-menu {
-        width: 100%;
-    } 
-    .container {
-        flex-direction: column;
-        gap: 2rem;
-    }
+  .user-container user-menu {
+    width: 100%;
+  }
+  .container {
+    flex-direction: column;
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .user-container,
+  .clubs-container {
+    display: none;
+  }
+
+  .post-container {
+    width: 100%;
+  }
 }
