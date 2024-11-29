@@ -47,7 +47,7 @@ export const restoreUserDataFromStorage = async () => {
 					// Actualizar el estado de la aplicación
 					dispatch(setUserData(updatedUser));
 
-					console.log('User data updated from Firestore');
+
 				} else {
 					// Si el documento no existe, mantener los datos almacenados
 					dispatch(setUserData(storedUser));
@@ -89,7 +89,6 @@ export const logOut = async () => {
 
 	try {
 		await signOut(auth);
-		console.log("Usuario deslogueado exitosamente");
 	} catch (error) {
 		console.error("Error al cerrar sesión:", error);
 	}
@@ -102,7 +101,6 @@ export const addPublications = async (product: any) => {
 
 		const where = collection(db, 'publications');
 		await addDoc(where, product);
-		console.log('Se añadió con exito');
 	} catch (error) {
 		console.error('Error adding document', error);
 	}
@@ -130,9 +128,6 @@ export const savePost = async (caption: string, file?: any) => {
 			imageUrl = await getDownloadURL(storageRef);
 		}
 
-		console.log('Appstate userData:', appState.userData);
-
-
 		const newPost = {
 			caption,
 			timestamp: new Date(),
@@ -144,11 +139,8 @@ export const savePost = async (caption: string, file?: any) => {
 			name: appState.userData.name,
 		};
 
-
 		// Guardar la quote y la URL de la imagen en Firestore en la subcolección 'posts'
 		await addDoc(userPostsCollection, newPost);
-
-		console.log('Post guardado exitosamente en la subcolección posts');
 	} catch (error) {
 		console.error('Error al guardar el post:', error);
 	}
@@ -162,9 +154,6 @@ export const getPosts = async () => {
 		const data = doc.data() as any;
 		arrayProducts.push({ id: doc.id, ...data });
 	});
-
-	console.log('posts en firebase', arrayProducts);
-
 
 	return arrayProducts;
 };
@@ -234,7 +223,6 @@ export const loginUser = async (email: string, password: string) => {
 
 			// Actualizar el estado de la aplicación con la información del usuario
 			dispatch(setUserData(user));
-			console.log('Usuario log', appState.userData);
 			return userCredential; // Devuelve el resultado para manejar en el frontend
 		}
 	} catch (error) {
@@ -268,7 +256,6 @@ export const addClubsCards = async (clubData: any) => {
 		const { doc, updateDoc, arrayUnion, getDoc } = await import('firebase/firestore');
 
 		const userId = appState.user;
-		console.log("Current userId:", userId);
 
 		if (!userId) {
 			throw new Error("No user ID found in appState");
@@ -288,7 +275,6 @@ export const addClubsCards = async (clubData: any) => {
 			usersid: arrayUnion(userId)
 		});
 
-		console.log("User added to club successfully");
 		return true;
 
 	} catch (error) {
@@ -303,7 +289,6 @@ export const getClubsCards = async () => {
 		const { collection, getDocs, query, where } = await import('firebase/firestore');
 
 		const userId = appState.user;
-		console.log("Fetching clubs for userId:", userId);
 
 		if (!userId) {
 			throw new Error("No user ID found in appState");
@@ -324,7 +309,6 @@ export const getClubsCards = async () => {
 			}
 		});
 
-		console.log("Retrieved user's clubs:", data);
 		return data;
 
 	} catch (error) {
@@ -358,7 +342,6 @@ export const removeClubsCards = async (clubData: any) => {
 		const { doc, updateDoc, arrayRemove, getDoc } = await import('firebase/firestore');
 
 		const userId = appState.user;
-		console.log("Current userId:", userId);
 
 		if (!userId) {
 			throw new Error("No user ID found in appState");
@@ -378,7 +361,6 @@ export const removeClubsCards = async (clubData: any) => {
 			usersid: arrayRemove(userId)
 		});
 
-		console.log("User removed from club successfully");
 		return true;
 
 	} catch (error) {
@@ -406,12 +388,10 @@ export const getPostsByUser = async (uid: string) => {
 };
 
 export const addLikes = async (postId: string) => {
-	console.log('In add like fb');
 
 	try {
 		const { db } = await getFirebaseInstance();
 		const userUid = appState.userData.uid; // UID del usuario actual
-		console.log("Current userId:", userUid);
 
 		if (!userUid) {
 			throw new Error("No user ID found in appState");
@@ -431,7 +411,6 @@ export const addLikes = async (postId: string) => {
 			likes: arrayUnion(userUid)
 		});
 
-		console.log("Like added to the post successfully", userUid);
 	} catch (error) {
 		console.error("Error in addLikes:", error);
 		throw error;
@@ -461,7 +440,6 @@ export const removeLikes = async (postId: string) => {
 			likes: arrayRemove(userUid)
 		});
 
-		console.log("Like eliminado del post con éxito", userUid);
 	} catch (error) {
 		console.error("Error al eliminar el like:", error);
 		throw error;
@@ -525,7 +503,6 @@ export const upLoadFile = async (file: File, userId: string) => {
 		const userRef = doc(db, 'users', userId);
 		await updateDoc(userRef, { image: downloadURL });
 
-		console.log('File uploaded, download URL:', downloadURL);
 		return downloadURL;
 	} catch (error) {
 		console.error('Error uploading file:', error);
@@ -558,8 +535,6 @@ export const upLoadFileBanner = async (file: File, userId: string) => {
 		// Actualizar el documento del usuario en Firestore
 		const userRef = doc(db, 'users', userId);
 		await updateDoc(userRef, { bannerImage: downloadURL });
-
-		console.log('File uploaded, download URL:', downloadURL);
 		return downloadURL;
 	} catch (error) {
 		console.error('Error uploading file:', error);
