@@ -69,7 +69,6 @@ class Post extends HTMLElement {
     }
 
     connectedCallback() {
-        console.log("Component connected");
         this.render();
     }
 
