@@ -6,29 +6,26 @@
 
 .container {
   display: flex;
-  gap: 2rem;
-}
-
-.container > section {
-  padding: 0 10px;
+  gap: 3rem;
+  justify-content: center;
 }
 
 .user-container {
   display: flex;
   flex-direction: column;
-  width: 25%;
+  width: 30%;
   gap: 1.5rem;
   transition: transform 0.3s ease;
 }
 
-.post-container {
-  display: flex;
-  width: 50%;
-  flex-direction: column;
+.user-container .clubs-container > * {
+  width: 100%;
 }
 
-.clubs-container {
-  width: 25%;
+.post-container {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
 }
 
 .user-container.hidden {
@@ -52,13 +49,21 @@
   padding: 0 1.5rem 0 1.5rem;
 }
 
-/* Container styles of DiscoverLandingCards*/
-.discover-card-container {
-  display: grid;
-  gap: 20px;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  padding: 1.5rem 0 1.5rem 0;
-  justify-content: flex-start;
+.clubs-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.clubs-container div {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background-color: #f9f5f3;
+  border-radius: 10px;
+  width: 100%;
+  padding: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 @media (max-width: 767px) {
@@ -72,7 +77,6 @@
     padding: 20px;
     flex-direction: row-reverse;
     margin: 0;
-    z-index: 1;
   }
 
   .user-container user-menu {
@@ -81,12 +85,13 @@
   .container {
     flex-direction: column;
     gap: 2rem;
+    align-items: center;
   }
-  .clubs-container {
+  .user-container {
     display: none;
   }
 
   .post-container {
-    width: 100%;
+    width: 90%;
   }
 }

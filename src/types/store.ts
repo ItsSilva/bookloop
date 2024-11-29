@@ -8,6 +8,8 @@ export type AppState = {
 		uid: string;
 		email: string;
 		name: string;
+		image: string;
+		bannerimage: string;
 	};
 	cards: any[],
 	clubs: any[],
@@ -24,6 +26,8 @@ export enum Screens {
 	'DISCOVERLANDING' = 'DISCOVERLANDING',
 	'DISCOVERMAIN' = 'DISCOVERMAIN',
 	'LANDING' = 'LANDING',
+	'PROFILE' = 'PROFILE',
+	'EDITPROFILE' = 'EDITPROFILE',
 }
 
 export enum Actions {
@@ -36,4 +40,6 @@ export enum Actions {
 	'GETUSERNAME' = 'GETUSERNAME',
 	'GETPOSTS' = 'GETPOSTS',
 	'ADDLIKES' = 'ADDLIKES',
+	'REMOVELIKES' = 'REMOVELIKES',
+	'UPDATEPROFILE' = 'UPDATEPROFILE',
 }

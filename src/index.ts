@@ -7,6 +7,8 @@ import './screens/DASHBOARD/DASHBOARD';
 import './screens/DISCOVERLANDING/DISCOVERLANDING';
 import './screens/CLUBSLANDING/CLUBSLANDING';;
 import './screens/LANDING/landing';
+import './screens/PROFILE/PROFILE';
+import './screens/EDITPROFILE/EDITPROFILE';
 
 
 class AppContainer extends HTMLElement {
@@ -66,6 +68,15 @@ class AppContainer extends HTMLElement {
 					this.shadowRoot.appendChild(landing);
 					break;
 
+				case Screens.PROFILE:
+					const profile = this.ownerDocument.createElement('app-profile');
+					this.shadowRoot.appendChild(profile);
+					break;
+
+				case Screens.EDITPROFILE:
+					const editProfile = this.ownerDocument.createElement('app-edit-profile');
+					this.shadowRoot.appendChild(editProfile);
+					break;
 
 				default:
 					break;

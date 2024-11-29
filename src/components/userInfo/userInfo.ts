@@ -39,15 +39,13 @@ class UserInfo extends HTMLElement {
         this.render();
         this.addEventListeners();
     }
-    
-  addEventListeners (){
-    const logoutButton = this.shadowRoot?.querySelector('.logout-btn');
-    if (logoutButton) {
-        logoutButton.addEventListener('click', () => {
-            logOut();
+
+    addEventListeners() {
+        const goToProfile = this.shadowRoot?.querySelector('.container');
+        goToProfile?.addEventListener('click', () => {
+            dispatch(navigate(Screens.PROFILE));
         });
     }
-  }
 
 
     render() {
@@ -100,12 +98,6 @@ class UserInfo extends HTMLElement {
             const atElement = this.ownerDocument.createElement('p');
             atElement.textContent = this.username || 'No user name';
             containerText.appendChild(atElement);
-
-            const logoutButton = this.ownerDocument.createElement('button');
-            logoutButton.className = 'logout-btn';
-            logoutButton.textContent = 'Log Out';
-            containerText.appendChild(logoutButton);
-
 
             this.shadowRoot.appendChild(container);
         }

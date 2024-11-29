@@ -55,6 +55,9 @@ class Register extends HTMLElement {
 			link.href = '../src/screens/REGISTER/REGISTER.css';
 			this.shadowRoot.appendChild(link);
 
+			const centerContainer = document.createElement('div');
+			centerContainer.className = 'center-container';
+
 			const container = document.createElement('section');
 			container.className = 'form-container';
 
@@ -81,14 +84,14 @@ class Register extends HTMLElement {
 			pName.addEventListener('change', this.changeName);
 			form.appendChild(pName);
 
-			const pUserName = document.createElement('input');
-			pUserName.placeholder = 'User name';
-			pUserName.className = 'form-input';
-			pUserName.required = true;
-			pUserName.addEventListener('change', this.changeAge);
-			form.appendChild(pUserName);
+			const puserName = document.createElement('input');
+			puserName.placeholder = 'User name';
+			puserName.className = 'form-input';
+			puserName.required = true;
+			puserName.addEventListener('change', this.changeAge);
+			form.appendChild(puserName);
 
-						const pEmail = document.createElement('input');
+			const pEmail = document.createElement('input');
 			pEmail.placeholder = 'Email';
 			pEmail.className = 'form-input';
 			pEmail.required = true;
@@ -111,11 +114,10 @@ class Register extends HTMLElement {
 			save.addEventListener('click', this.submitForm);
 			form.appendChild(save);
 
-
-
 			container.appendChild(form);
+			centerContainer.appendChild(container);
 
-			this.shadowRoot.appendChild(container);
+			this.shadowRoot.appendChild(centerContainer);
 		}
 	}
 }

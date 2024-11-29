@@ -6,17 +6,28 @@
 
 .container {
   display: flex;
-  gap: 2rem;
+}
+
+.container > section {
+  padding: 0 10px;
 }
 
 .user-container {
   display: flex;
   flex-direction: column;
-  width: 24%;
+  width: 25%;
   gap: 1.5rem;
-  padding: 0 0 0 1rem;
   transition: transform 0.3s ease;
-  margin-left: 2rem;
+}
+
+.post-container {
+  display: flex;
+  width: 50%;
+  flex-direction: column;
+}
+
+.clubs-container {
+  width: 25%;
 }
 
 .user-container.hidden {
@@ -41,14 +52,13 @@
 }
 
 .discover-card-container {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
   gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   padding: 1.5rem 0 1.5rem 0;
-  justify-content: flex-start;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 767px) {
   .user-container {
     background-color: #6d413f;
     border-radius: 15px 15px 0 0;
@@ -61,7 +71,6 @@
     margin: 0;
     z-index: 1;
   }
-
   .user-container user-menu {
     width: 100%;
   }
@@ -71,5 +80,11 @@
   }
   .discover-card-container {
     justify-content: center;
+  }
+  .clubs-container {
+    display: none;
+  }
+  .post-container {
+    width: 100%;
   }
 }

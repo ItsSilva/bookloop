@@ -1,50 +1,57 @@
 .clubs--info {
-    width: 400px;
-    height: 50px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    margin: 0 1rem 0 1rem;
+  min-height: 50px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .clubs--info img {
-    
-    height: 45px;
-    width: 45px;
-    border-radius: 50%;
-    margin-right: 10px;
+  height: 45px;
+  width: 45px;
+  border-radius: 50%;
 }
 
 .clubs--info__text {
-    display: flex;
-    align-items: flex-start;
-    flex-direction: column;
-    column-gap: 0;
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  column-gap: 0;
+  width: calc(100% - 170px);
+  min-width: 140px;
 }
 
 .clubs--info__text h4 {
-    color: var(--banner-bg-color, #b4b13d);
-    position: relative;
-    top: 20px;
+  color: var(--banner-bg-color, #b4b13d);
+  position: relative;
+  line-height: 1;
+  margin: 0;
 }
 
 .clubs--info__text p {
-    position: relative;
-    top: -20px;
-    color: #53413a;
+  position: relative;
+  margin: 0;
+  color: #53413a;
+  line-height: 1;
 }
 .clubs--info__button {
-    background-color: #C2BE4D;
-    color: #F9F5F3;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 20px;
-    font-weight: 600;
-    cursor: pointer;
-    margin: 0 0 0 16px;
-    display: block;
-    min-width: 100px;
-    transition: background-color 0.3s ease;
+  background-color: #c2be4d;
+  color: #f9f5f3;
+  border: none;
+  padding: 8px 6px;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  display: block;
+  transition: background-color 0.3s ease;
+}
+
+@media (max-width: 1250px) {
+  .clubs--info__text {
+    align-items: center;
+    width: 100%;
+    min-width: unset;
+  }
 }

@@ -1,12 +1,68 @@
 import { browserLocalPersistence } from 'firebase/auth';
 import { appState, dispatch } from '../store/index';
-import { addDoc, collection, doc, getDocs, getFirestore } from 'firebase/firestore';
+import { addDoc, collection, doc, getDocs, getFirestore, getDoc, arrayRemove } from 'firebase/firestore';
 import { navigate, setUserCredentials, setUserData } from '../store/actions';
 import { Screens } from '../types/store';
-import {  updateDoc, arrayUnion } from 'firebase/firestore';
+import { updateDoc, arrayUnion } from 'firebase/firestore';
 let db: any;
 let auth: any;
-let storage : any;
+let storage: any;
+
+export const restoreUserDataFromStorage = async () => {
+	try {
+		// Primero, obtener los datos almacenados en sessionStorage
+		const storedUserData = sessionStorage.getItem('userData');
+
+		if (storedUserData) {
+			const storedUser = JSON.parse(storedUserData);
+
+			// Importar las funciones necesarias de Firestore
+			const { doc, getDoc } = await import('firebase/firestore');
+			const { auth } = await getFirebaseInstance();
+
+			// Verificar si hay un usuario autenticado
+			if (auth.currentUser) {
+				// Crear una referencia al documento del usuario
+				const userRef = doc(db, 'users', auth.currentUser.uid);
+
+				// Obtener los datos más recientes del usuario desde Firestore
+				const userDoc = await getDoc(userRef);
+
+				if (userDoc.exists()) {
+					const latestUserData = userDoc.data();
+
+					// Crear un objeto de usuario actualizado
+					const updatedUser = {
+						uid: latestUserData.uid,
+						email: latestUserData.email,
+						username: latestUserData.userName,
+						name: latestUserData.name,
+						image: latestUserData.image,
+						bannerimage: latestUserData.bannerImage,
+					};
+
+					// Actualizar sessionStorage con los datos más recientes
+					sessionStorage.setItem('userData', JSON.stringify(updatedUser));
+
+					// Actualizar el estado de la aplicación
+					dispatch(setUserData(updatedUser));
+
+					console.log('User data updated from Firestore');
+				} else {
+					// Si el documento no existe, mantener los datos almacenados
+					dispatch(setUserData(storedUser));
+				}
+			} else {
+				// Si no hay usuario autenticado, usar los datos almacenados
+				dispatch(setUserData(storedUser));
+			}
+		}
+	} catch (error) {
+		console.error('Error restoring user data:', error);
+		// Limpiar sessionStorage en caso de error
+		sessionStorage.removeItem('userData');
+	}
+};
 
 export const getFirebaseInstance = async () => {
 	if (!db) {
@@ -14,33 +70,30 @@ export const getFirebaseInstance = async () => {
 		const { getFirestore } = await import('firebase/firestore');
 		const { initializeApp } = await import('firebase/app');
 		const { getAuth } = await import('firebase/auth');
-		const { getStorage } = await import('firebase/storage');
-
-		// Your web app's Firebase configuration
-		//IMPORTANT: delete the firebaseConfig when you push to a public repository
-		//firebaseConfig is in the .gitignore file
+		const { getStorage, ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
 
 		const app = initializeApp(firebaseConfig);
 		db = getFirestore(app);
 		auth = getAuth(app);
 		storage = getStorage(app)
+
+		// Llamar a la función para restaurar datos con la capacidad de actualizar
+		await restoreUserDataFromStorage();
 	}
 	return { db, auth, storage };
 };
 
-
 export const logOut = async () => {
 	const { auth } = await getFirebaseInstance();
 	const { signOut } = await import('firebase/auth');
-  
-	try {
-	  await signOut(auth); 
-	  console.log("Usuario deslogueado exitosamente");
-	} catch (error) {
-	  console.error("Error al cerrar sesión:", error);
-	}
-  };
 
+	try {
+		await signOut(auth);
+		console.log("Usuario deslogueado exitosamente");
+	} catch (error) {
+		console.error("Error al cerrar sesión:", error);
+	}
+};
 
 export const addPublications = async (product: any) => {
 	try {
@@ -57,49 +110,49 @@ export const addPublications = async (product: any) => {
 
 export const savePost = async (caption: string, file?: any) => {
 	try {
-	  const { db, auth, storage } = await getFirebaseInstance();
-	  const user = auth.currentUser;
+		const { db, auth, storage } = await getFirebaseInstance();
+		const user = auth.currentUser;
 
-	  
-	  if (!user) {
-		throw new Error('Usuario no autenticado');
-	  }
-  
-	  const { collection, addDoc } = await import('firebase/firestore');
-	  const userPostsCollection = collection(db, 'posts');
-	  let imageUrl = null;
-  
-	  // Subir la imagen a Firebase Storage si existe
-	  if (file) {
-		const { ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
-		const storageRef = ref(storage, `images/${user.uid}/${file.name}`);
-		await uploadBytes(storageRef, file);
-		imageUrl = await getDownloadURL(storageRef);
-	  }
 
-	  console.log('Appstate userData:', appState.userData);
-	  
+		if (!user) {
+			throw new Error('Usuario no autenticado');
+		}
 
-	  const newPost = {
-		caption,
-		timestamp: new Date(),
-		userId: user.uid,
-		comments: [],
-		imageUrl,
-		likes: 0,
-		// userName: appState.userData.username,
-		name: appState.userData.name,
-	  };
-  
+		const { collection, addDoc } = await import('firebase/firestore');
+		const userPostsCollection = collection(db, 'posts');
+		let imageUrl = null;
 
-	  // Guardar la quote y la URL de la imagen en Firestore en la subcolección 'posts'
-	  await addDoc(userPostsCollection, newPost);
-  
-	  console.log('Post guardado exitosamente en la subcolección posts');
+		// Subir la imagen a Firebase Storage si existe
+		if (file) {
+			const { ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
+			const storageRef = ref(storage, `images/${user.uid}/${file.name}`);
+			await uploadBytes(storageRef, file);
+			imageUrl = await getDownloadURL(storageRef);
+		}
+
+		console.log('Appstate userData:', appState.userData);
+
+
+		const newPost = {
+			caption,
+			timestamp: new Date(),
+			userId: user.uid,
+			comments: [],
+			imageUrl,
+			likes: 0,
+			// userName: appState.userData.userName,
+			name: appState.userData.name,
+		};
+
+
+		// Guardar la quote y la URL de la imagen en Firestore en la subcolección 'posts'
+		await addDoc(userPostsCollection, newPost);
+
+		console.log('Post guardado exitosamente en la subcolección posts');
 	} catch (error) {
-	  console.error('Error al guardar el post:', error);
+		console.error('Error al guardar el post:', error);
 	}
-  };
+};
 
 export const getPosts = async () => {
 	const querySnapshot = await getDocs(collection(db, 'posts'));
@@ -111,85 +164,84 @@ export const getPosts = async () => {
 	});
 
 	console.log('posts en firebase', arrayProducts);
-	
+
 
 	return arrayProducts;
 };
 
 export const addComment = async (postId: string, comment: string) => {
-    const postRef = doc(db, 'posts', postId);
-    try {
-        await updateDoc(postRef, {
-            comments: arrayUnion(comment)
-        });
-    } catch (error) {
-        console.error("Error adding comment:", error);
-    }
+	const postRef = doc(db, 'posts', postId);
+	try {
+		await updateDoc(postRef, {
+			comments: arrayUnion(comment)
+		});
+	} catch (error) {
+		console.error("Error adding comment:", error);
+	}
 };
-
-
-
 
 export const registerUser = async (credentials: any) => {
 	try {
-	  const { auth, db } = await getFirebaseInstance();
-	  const { createUserWithEmailAndPassword } = await import('firebase/auth');
-	  const { doc, setDoc } = await import('firebase/firestore');
-  
-	  const userCredential = await createUserWithEmailAndPassword(auth, credentials.email, credentials.password);
-  
-	  const userRef = doc(db, 'users', userCredential.user.uid);
-	  const userData = {
-		userName: credentials.userName,
-		name: credentials.name,
-		uid: userCredential.user.uid,
-		email: userCredential.user.email,
-	  };
-  
-	  await setDoc(userRef, userData);
-  
-	  // Update application status with user information
-	  dispatch(setUserData(userData));
-  
-	  return true;
-	} catch (error) {
-	  console.error(error);
-	  return false;
-	}
-  };
+		const { auth, db } = await getFirebaseInstance();
+		const { createUserWithEmailAndPassword } = await import('firebase/auth');
+		const { doc, setDoc } = await import('firebase/firestore');
 
-  export const loginUser = async (email: string, password: string) => {
-	try {
-	  const { doc, getDoc } = await import('firebase/firestore');
-	  const { auth } = await getFirebaseInstance();
-	  const { signInWithEmailAndPassword, setPersistence, browserLocalPersistence } = await import('firebase/auth');
-  
-	  await setPersistence(auth, browserLocalPersistence);
-	  const userCredential = await signInWithEmailAndPassword(auth, email, password);
-  
-	  const userRef = doc(db, 'users', auth.currentUser.uid);
-	  const userDoc = await getDoc(userRef);
-  
-	  if (userDoc.exists()) {
-		const userData = userDoc.data();
-		const user = {
-		  uid: userData.uid,
-		  email: userData.email,
-		  userName: userData.userName,
-		  name: userData.name,
+		const userCredential = await createUserWithEmailAndPassword(auth, credentials.email, credentials.password);
+
+		const userRef = doc(db, 'users', userCredential.user.uid);
+		const userData = {
+			userName: credentials.userName,
+			name: credentials.name,
+			uid: userCredential.user.uid,
+			email: userCredential.user.email,
+			image: 'https://firebasestorage.googleapis.com/v0/b/bookloopdca.firebasestorage.app/o/imagesUserDefault%2FDefaultUserImage.jpg?alt=media&token=5b0ab601-3177-400f-8032-93e4fe8311a5',
+			bannerImage: 'https://firebasestorage.googleapis.com/v0/b/bookloopdca.firebasestorage.app/o/imagesBannerDefault%2FDefaultBannerImage.jpg?alt=media&token=ac66c60d-4248-420f-978a-e8f711859518',
 		};
-  
-		// Actualizar el estado de la aplicación con la información del usuario
-		dispatch(setUserData(user));
-		console.log('Usuario log', appState.userData);
-  
-		return userCredential; // Devuelve el resultado para manejar en el frontend
-	  }
+
+		await setDoc(userRef, userData);
+
+		// Update application status with user information
+		dispatch(setUserData(userData));
+
+		return true;
 	} catch (error) {
-	  console.error("Login error", error);
-	  return null;
+		console.error(error);
+		return false;
 	}
-  };
+};
+
+export const loginUser = async (email: string, password: string) => {
+	try {
+		const { doc, getDoc } = await import('firebase/firestore');
+		const { auth } = await getFirebaseInstance();
+		const { signInWithEmailAndPassword, setPersistence, browserLocalPersistence } = await import('firebase/auth');
+		await setPersistence(auth, browserLocalPersistence);
+		const userCredential = await signInWithEmailAndPassword(auth, email, password);
+		const userRef = doc(db, 'users', auth.currentUser.uid);
+		const userDoc = await getDoc(userRef);
+		if (userDoc.exists()) {
+			const userData = userDoc.data();
+			const user = {
+				uid: userData.uid,
+				email: userData.email,
+				username: userData.userName,
+				name: userData.name,
+				image: userData.image,
+				bannerimage: userData.bannerImage,
+			};
+			// Guardar userData en sessionStorage
+			sessionStorage.setItem('userData', JSON.stringify(user));
+
+			// Actualizar el estado de la aplicación con la información del usuario
+			dispatch(setUserData(user));
+			console.log('Usuario log', appState.userData);
+			return userCredential; // Devuelve el resultado para manejar en el frontend
+		}
+	} catch (error) {
+		console.error("Login error", error);
+		return null;
+	}
+};
 
 export const getDiscoverCards = async () => {
 	try {
@@ -211,74 +263,74 @@ export const getDiscoverCards = async () => {
 };
 
 export const addClubsCards = async (clubData: any) => {
-    try {
-        const { db } = await getFirebaseInstance();
-        const { doc, updateDoc, arrayUnion, getDoc } = await import('firebase/firestore');
+	try {
+		const { db } = await getFirebaseInstance();
+		const { doc, updateDoc, arrayUnion, getDoc } = await import('firebase/firestore');
 
-        const userId = appState.user;
-        console.log("Current userId:", userId);
+		const userId = appState.user;
+		console.log("Current userId:", userId);
 
-        if (!userId) {
-            throw new Error("No user ID found in appState");
-        }
+		if (!userId) {
+			throw new Error("No user ID found in appState");
+		}
 
-        // Reference to the specific document in discover collection
-        const discoverRef = doc(db, 'discover', clubData.uid.toString());
-        
-        // Get current document data to verify it exists
-        const docSnap = await getDoc(discoverRef);
-        if (!docSnap.exists()) {
-            throw new Error("Discover document doesn't exist");
-        }
+		// Reference to the specific document in discover collection
+		const discoverRef = doc(db, 'discover', clubData.uid.toString());
 
-        // Update the usersid array with the new userId
-        await updateDoc(discoverRef, {
-            usersid: arrayUnion(userId)
-        });
+		// Get current document data to verify it exists
+		const docSnap = await getDoc(discoverRef);
+		if (!docSnap.exists()) {
+			throw new Error("Discover document doesn't exist");
+		}
 
-        console.log("User added to club successfully");
-        return true;
+		// Update the usersid array with the new userId
+		await updateDoc(discoverRef, {
+			usersid: arrayUnion(userId)
+		});
 
-    } catch (error) {
-        console.error("Error in addClubsCards:", error);
-        throw error;
-    }
+		console.log("User added to club successfully");
+		return true;
+
+	} catch (error) {
+		console.error("Error in addClubsCards:", error);
+		throw error;
+	}
 };
 
 export const getClubsCards = async () => {
-    try {
-        const { db } = await getFirebaseInstance();
-        const { collection, getDocs, query, where } = await import('firebase/firestore');
+	try {
+		const { db } = await getFirebaseInstance();
+		const { collection, getDocs, query, where } = await import('firebase/firestore');
 
-        const userId = appState.user;
-        console.log("Fetching clubs for userId:", userId);
+		const userId = appState.user;
+		console.log("Fetching clubs for userId:", userId);
 
-        if (!userId) {
-            throw new Error("No user ID found in appState");
-        }
+		if (!userId) {
+			throw new Error("No user ID found in appState");
+		}
 
-        const discoverRef = collection(db, 'discover');
-        const querySnapshot = await getDocs(discoverRef);
+		const discoverRef = collection(db, 'discover');
+		const querySnapshot = await getDocs(discoverRef);
 
-        const data: any[] = [];
-        querySnapshot.forEach((doc) => {
-            const clubData = doc.data();
-            // only include cards where the user is in usersid
-            if (clubData.usersid && Array.isArray(clubData.usersid) && clubData.usersid.includes(userId)) {
-                data.push({
-                    uid: doc.id,
-                    ...clubData
-                });
-            }
-        });
+		const data: any[] = [];
+		querySnapshot.forEach((doc) => {
+			const clubData = doc.data();
+			// only include cards where the user is in usersid
+			if (clubData.usersid && Array.isArray(clubData.usersid) && clubData.usersid.includes(userId)) {
+				data.push({
+					uid: doc.id,
+					...clubData
+				});
+			}
+		});
 
-        console.log("Retrieved user's clubs:", data);
-        return data;
+		console.log("Retrieved user's clubs:", data);
+		return data;
 
-    } catch (error) {
-        console.error("Error in getClubsCards:", error);
-        throw error;
-    }
+	} catch (error) {
+		console.error("Error in getClubsCards:", error);
+		throw error;
+	}
 };
 
 export const getUserName = async () => {
@@ -301,44 +353,44 @@ export const getUserName = async () => {
 };
 
 export const removeClubsCards = async (clubData: any) => {
-    try {
-        const { db } = await getFirebaseInstance();
-        const { doc, updateDoc, arrayRemove, getDoc } = await import('firebase/firestore');
+	try {
+		const { db } = await getFirebaseInstance();
+		const { doc, updateDoc, arrayRemove, getDoc } = await import('firebase/firestore');
 
-        const userId = appState.user;
-        console.log("Current userId:", userId);
+		const userId = appState.user;
+		console.log("Current userId:", userId);
 
-        if (!userId) {
-            throw new Error("No user ID found in appState");
-        }
+		if (!userId) {
+			throw new Error("No user ID found in appState");
+		}
 
-        // Reference to the specific document in discover collection
-        const discoverRef = doc(db, 'discover', clubData.uid.toString());
-        
-        // Get current document data to verify it exists
-        const docSnap = await getDoc(discoverRef);
-        if (!docSnap.exists()) {
-            throw new Error("Discover document doesn't exist");
-        }
+		// Reference to the specific document in discover collection
+		const discoverRef = doc(db, 'discover', clubData.uid.toString());
 
-        // Remove the userId from the usersid array
-        await updateDoc(discoverRef, {
-            usersid: arrayRemove(userId)
-        });
+		// Get current document data to verify it exists
+		const docSnap = await getDoc(discoverRef);
+		if (!docSnap.exists()) {
+			throw new Error("Discover document doesn't exist");
+		}
 
-        console.log("User removed from club successfully");
-        return true;
+		// Remove the userId from the usersid array
+		await updateDoc(discoverRef, {
+			usersid: arrayRemove(userId)
+		});
 
-    } catch (error) {
-        console.error("Error in removeClubsCards:", error);
-        throw error;
-    }
+		console.log("User removed from club successfully");
+		return true;
+
+	} catch (error) {
+		console.error("Error in removeClubsCards:", error);
+		throw error;
+	}
 };
 
 export const getUser = async (uid: string) => {
 	const { db, auth } = await getFirebaseInstance();
-	const {  doc, getDoc } = await import('firebase/firestore');
-	
+	const { doc, getDoc } = await import('firebase/firestore');
+
 	const ref = doc(db, 'users', uid);
 	const querySnapshot = await getDoc(ref);
 
@@ -353,37 +405,176 @@ export const getPostsByUser = async (uid: string) => {
 	return filtered;
 };
 
-export const addLikes = async (uid: string, liked: boolean) => {
-    try {
-        const { db } = await getFirebaseInstance();
-        const { doc, updateDoc, arrayUnion, arrayRemove } = await import('firebase/firestore');
+export const addLikes = async (postId: string) => {
+	console.log('In add like fb');
 
-        const userId = appState.user;
-        console.log("Current userId:", userId);
+	try {
+		const { db } = await getFirebaseInstance();
+		const userUid = appState.userData.uid; // UID del usuario actual
+		console.log("Current userId:", userUid);
 
-        if (!userId) {
-            throw new Error("No user ID found in appState");
-        }
+		if (!userUid) {
+			throw new Error("No user ID found in appState");
+		}
 
-        // Reference to the specific document in posts collection
-        const postRef = doc(db, 'posts', uid);
+		// Reference to the specific document in discover collection
+		const discoverRef = doc(db, 'posts', postId.toString());
 
-        // Update the likes array based on the liked state
-        if (liked) {
-            await updateDoc(postRef, {
-                likes: arrayUnion(userId)
-            });
-        } else {
-            await updateDoc(postRef, {
-                likes: arrayRemove(userId)
-            });
-        }
+		// Get current document data to verify it exists
+		const docSnap = await getDoc(discoverRef);
+		if (!docSnap.exists()) {
+			throw new Error("Discover document doesn't exist");
+		}
 
-        console.log("Likes updated successfully");
-        return true;
+		// Update the usersid array with the new userId
+		await updateDoc(discoverRef, {
+			likes: arrayUnion(userUid)
+		});
 
-    } catch (error) {
-        console.error("Error in addLikes:", error);
-        throw error;
-    }
+		console.log("Like added to the post successfully", userUid);
+	} catch (error) {
+		console.error("Error in addLikes:", error);
+		throw error;
+	}
 };
+
+export const removeLikes = async (postId: string) => {
+	try {
+		const { db } = await getFirebaseInstance();
+		const userUid = appState.userData.uid; // UID del usuario actual
+
+		if (!userUid) {
+			throw new Error("No user ID found in appState");
+		}
+
+		// Reference to the specific document in the posts collection
+		const postRef = doc(db, 'posts', postId);
+
+		// Get the data of the current document to verify that it exists
+		const postDoc = await getDoc(postRef);
+		if (!postDoc.exists()) {
+			throw new Error("El post no existe");
+		}
+
+		// Remove user ID from likes array
+		await updateDoc(postRef, {
+			likes: arrayRemove(userUid)
+		});
+
+		console.log("Like eliminado del post con éxito", userUid);
+	} catch (error) {
+		console.error("Error al eliminar el like:", error);
+		throw error;
+	}
+};
+
+export const userHasLikedPost = async (postId: string): Promise<boolean> => {
+	try {
+		const { db } = await getFirebaseInstance();
+		const userUid = appState.userData.uid;
+
+		if (!userUid) {
+			throw new Error("No user ID found in appState");
+		}
+
+		// Reference to the specific document in the posts collection
+		const postRef = doc(db, 'posts', postId);
+
+		// Get current document data
+		const postDoc = await getDoc(postRef);
+
+		// Check if the user ID is present in the likes array
+		return (postDoc.data()?.likes as string[]).includes(userUid);
+	} catch (error) {
+		console.error("Error checking if user has liked post:", error);
+		return false;
+	}
+};
+
+export const updateProfile = async (userData: any) => {
+	try {
+		const db = await getFirestore();
+		const { updateDoc, doc } = await import('firebase/firestore');
+
+		if (!userData.uid) {
+			throw new Error("El UID del usuario es inválido o está vacío.");
+		}
+
+		const docRef = doc(db, 'users', userData.uid); // Usa el UID como referencia
+		const updatedData = {
+			name: userData.name,
+			userName: userData.username,
+		};
+		await updateDoc(docRef, updatedData);
+	} catch (error) {
+		console.error("Error updating document:", error);
+	}
+};
+
+export const upLoadFile = async (file: File, userId: string) => {
+	const { storage, db } = await getFirebaseInstance();
+	const { ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
+	const { doc, updateDoc } = await import('firebase/firestore');
+
+	const storageRef = ref(storage, 'imagesProfile/' + userId);
+	try {
+		const snapshot = await uploadBytes(storageRef, file);
+		const downloadURL = await getDownloadURL(snapshot.ref);
+
+		// Actualizar el documento del usuario en Firestore
+		const userRef = doc(db, 'users', userId);
+		await updateDoc(userRef, { image: downloadURL });
+
+		console.log('File uploaded, download URL:', downloadURL);
+		return downloadURL;
+	} catch (error) {
+		console.error('Error uploading file:', error);
+		throw error;
+	}
+};
+
+export const getFile = async (id: string) => {
+	const { storage } = await getFirebaseInstance();
+	const { ref, getDownloadURL } = await import('firebase/storage');
+	const storageRef = ref(storage, 'imagesProfile/' + id);
+	const urlImg = await getDownloadURL(ref(storageRef)).then((url) => {
+		return url;
+	}).catch((error) => {
+		console.error(error);
+	});
+	return urlImg;
+}
+
+export const upLoadFileBanner = async (file: File, userId: string) => {
+	const { storage, db } = await getFirebaseInstance();
+	const { ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
+	const { doc, updateDoc } = await import('firebase/firestore');
+
+	const storageRef = ref(storage, 'imagesBanner/' + userId);
+	try {
+		const snapshot = await uploadBytes(storageRef, file);
+		const downloadURL = await getDownloadURL(snapshot.ref);
+
+		// Actualizar el documento del usuario en Firestore
+		const userRef = doc(db, 'users', userId);
+		await updateDoc(userRef, { bannerImage: downloadURL });
+
+		console.log('File uploaded, download URL:', downloadURL);
+		return downloadURL;
+	} catch (error) {
+		console.error('Error uploading file:', error);
+		throw error;
+	}
+};
+
+export const getFileBanner = async (id: string) => {
+	const { storage } = await getFirebaseInstance();
+	const { ref, getDownloadURL } = await import('firebase/storage');
+	const storageRef = ref(storage, 'imagesBanner/' + id);
+	const urlImg = await getDownloadURL(ref(storageRef)).then((url) => {
+		return url;
+	}).catch((error) => {
+		console.error(error);
+	});
+	return urlImg;
+}

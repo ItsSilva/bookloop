@@ -22,7 +22,7 @@ import '../../components/elements/clubInfo/clubInfo';
 import { appState, dispatch, addObserver } from '../../store';
 import DiscoverLandingCards, { AttributeDiscoverLandingCards } from '../../components/DiscoverLandingCards/DiscoverLandingCards';
 import Banner, { AttributeBanner } from '../../components/banner/banner';
-import { getDiscoverCardsAction, getPostsAction} from '../../store/actions';
+import { getDiscoverCardsAction, getPostsAction } from '../../store/actions';
 import { Screens } from '../../types/store';
 
 class Dashboard extends HTMLElement {
@@ -36,15 +36,15 @@ class Dashboard extends HTMLElement {
         addObserver(this);
 
         this.currentUserPic = dataUsers[0].userpic;
+        const dataUser = dataUsers[0];
 
-        dataUsers.forEach(dataUser => {
-            const userCard = this.ownerDocument.createElement('user-info') as UserInfo;
-            userCard.setAttribute('background', dataUser.background);
-            userCard.setAttribute('userpic', dataUser.userpic);
-            userCard.setAttribute('name', dataUser.name);
-            userCard.setAttribute('username', dataUser.username);
-            this.user.push(userCard);
-        });
+        const userCard = this.ownerDocument.createElement('user-info') as UserInfo;
+        userCard.setAttribute('background', appState.userData.bannerimage);
+        userCard.setAttribute('userpic', appState.userData.image);
+        userCard.setAttribute('name', appState.userData.name);
+        userCard.setAttribute('userName', appState.userData.username);
+        this.user.push(userCard);
+
     }
 
     async connectedCallback() {
@@ -59,21 +59,21 @@ class Dashboard extends HTMLElement {
         console.log('Dashboard cards', appState.cards.length);
         console.log('Dashboard post', appState.posts.length);
 
-        
+
 
         if (appState.posts.length != 0) {
-            
-                }else {
-                console.log('Dashboard quantity', appState.posts.length);
-            
-        const action = await getPostsAction();
-        dispatch(action);
-        console.log('post in appstate', appState.posts);
-                
+
+        } else {
+            console.log('Dashboard quantity', appState.posts.length);
+
+            const action = await getPostsAction();
+            dispatch(action);
+            console.log('post in appstate', appState.posts);
+
 
         }
 
-                
+
         this.render();
     }
 
@@ -87,7 +87,7 @@ class Dashboard extends HTMLElement {
     async renderGetPostsAction(container: HTMLElement) {
         try {
             const userId = appState.user;
-            
+
             if (!userId) {
                 console.error("No user ID found in appState");
                 return;
@@ -95,14 +95,18 @@ class Dashboard extends HTMLElement {
 
             container.innerHTML = '';
 
+
             appState.posts.forEach((dataPost: any) => {
-                console.log("Processing post data:", dataPost);
+                // console.log("Processing post data:", dataPost);
+                // console.log('POST', dataPost);
+
                 const post = this.ownerDocument.createElement('post-component') as Post;
                 post.setAttribute(Attribute2.clubpic, dataPost.imageUrl);
                 post.setAttribute(Attribute2.clubname, dataPost.name);
                 post.setAttribute(Attribute2.image, dataPost.imageUrl);
-                post.setAttribute(Attribute2.likes, dataPost.likes);
-                post.setAttribute(Attribute2.comments, dataPost.comments);
+                post.setAttribute(Attribute2.likes, dataPost.likes.length || 0);
+                post.setAttribute(Attribute2.uid, dataPost.id);
+                // post.setAttribute(Attribute2.comments, dataPost.comments);
                 post.setAttribute(Attribute2.author, dataPost.name);
                 post.setAttribute(Attribute2.desc, dataPost.caption);
                 container.appendChild(post);
@@ -148,13 +152,13 @@ class Dashboard extends HTMLElement {
             userContainer.appendChild(userMenu);
             container.appendChild(userContainer);
 
-         
+
 
             const postContainer = this.ownerDocument.createElement('section');
             postContainer.className = 'post-container';
 
             const newPost = this.ownerDocument.createElement('new-post');
-            newPost.setAttribute('userpic', this.currentUserPic);
+            newPost.setAttribute('userpic', appState.userData.image);
             newPost.setAttribute('text', 'Create new post');
             newPost.setAttribute('buttontext', 'Text');
             newPost.setAttribute('buttonimages', 'Images');
@@ -222,11 +226,11 @@ class Dashboard extends HTMLElement {
 
     handleLogout() {
         // Limpia el estado del usuario en appState o realiza la acción de logout
-        appState.user = {}; 
-        dispatch({ type: 'LOGOUT' }); 
-    
+        appState.user = {};
+        dispatch({ type: 'LOGOUT' });
+
         // Redirigir al usuario a la pantalla de login o la página principal
-        window.location.href = '/login'; 
+        window.location.href = '/login';
     }
 
 }

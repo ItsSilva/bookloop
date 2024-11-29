@@ -1,95 +1,102 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 .container {
-    background-color: #F9F5F3;
-    border-radius: 10px;
-    width: 100%;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  background-color: #f9f5f3;
+  border-radius: 10px;
+  width: 100%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-.action-user-element, .setting-user-element {
-    display: flex;
-    flex-direction: column;
+.action-user-element,
+.setting-user-element {
+  display: flex;
+  flex-direction: column;
 }
 
-.action-user-element > div, .setting-user-element > div {
-    margin: 5%;
+.action-user-element > div,
+.setting-user-element > div {
+  margin: 5%;
 }
 
 .setting-user-element {
-    margin-top: 50%;
+  margin-top: 50%;
 }
 
 button {
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    width: 100%;
-    text-align: left;
-    padding: 0;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  padding: 0;
 }
 
 i {
-    margin-right: 10px;
-    font-size: 18px;
-    width: 20px;
-    text-align: center;
+  margin-right: 10px;
+  font-size: 18px;
+  width: 20px;
+  text-align: center;
 }
 
-.home-element button, .home-element i {
-    color: #ffc320;
+.home-element button,
+.home-element i {
+  color: #ffc320;
 }
 
-.clubs-element button, .clubs-element i {
-    color: #6471c7;
+.clubs-element button,
+.clubs-element i {
+  color: #6471c7;
 }
 
-.discover-element button, .discover-element i {
-    color: #c2be4d;
+.discover-element button,
+.discover-element i {
+  color: #c2be4d;
 }
 
-.help-element i, .setting-element i {
-    color: #999;
+.help-element i,
+.setting-element i {
+  color: #999;
 }
 
-.help-element, .setting-element {
-    opacity: 0.5;
+.help-element,
+.setting-element {
+  opacity: 0.5;
 }
 
-@media (max-width: 500px) {
-    .container {
-        box-shadow: none;
-        background: unset;
-    }
+@media (max-width: 767px) {
+  .container {
+    box-shadow: none;
+    background: unset;
+  }
 
-    .setting-user-element {
-        display: none;
-    }
+  .setting-user-element {
+    display: none;
+  }
 
-    .action-user-element {
-        flex-direction: row;
-    }
+  .action-user-element {
+    flex-direction: row;
+  }
 
-    .action-user-element > div  {
-        margin: 0;
-        flex: 1;
-    }
+  .action-user-element > div {
+    margin: 0;
+    flex: 1;
+  }
 
-    .action-user-element > div > button {
-        font-size: 0;
-        justify-content: center;
-    }
+  .action-user-element > div > button {
+    font-size: 0;
+    justify-content: center;
+  }
 
-    .action-user-element > div > button i {
-        color: #F9F5F3 !important;
-        font-size: 24px;
-    }
+  .action-user-element > div > button i {
+    color: #f9f5f3 !important;
+    font-size: 24px;
+  }
 }
