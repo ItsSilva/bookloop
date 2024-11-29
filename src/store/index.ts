@@ -8,11 +8,9 @@ import { navigate, setUserCredentials } from './actions';
 const onAuth = async () => {
 	const { auth } = await getFirebaseInstance();
 	onAuthStateChanged(auth, (user) => {
-		console.log(user);
 		if (user) {
 			user.uid !== null ? dispatch(setUserCredentials(user.uid)) : '';
 			dispatch(navigate(Screens.DASHBOARD));
-			console.log('user data', appState.userData);
 
 		} else {
 			dispatch(navigate(Screens.LOGIN));
