@@ -87,6 +87,9 @@ class EditProfile extends HTMLElement {
             link.href = '../src/screens/EDITPROFILE/EDITPROFILE.css';
             this.shadowRoot.appendChild(link);
 
+            const centerContainer = document.createElement('div');
+            centerContainer.className = 'center-container';
+
             const container = document.createElement('section');
             container.className = 'form-container';
 
@@ -171,8 +174,9 @@ class EditProfile extends HTMLElement {
             form.appendChild(profile);
 
             container.appendChild(form);
+            centerContainer.appendChild(container);
 
-            this.shadowRoot.appendChild(container);
+            this.shadowRoot.appendChild(centerContainer);
         }
     }
 }
