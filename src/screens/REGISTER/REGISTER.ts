@@ -55,6 +55,9 @@ class Register extends HTMLElement {
 			link.href = '../src/screens/REGISTER/REGISTER.css';
 			this.shadowRoot.appendChild(link);
 
+			const centerContainer = document.createElement('div');
+			centerContainer.className = 'center-container';
+
 			const container = document.createElement('section');
 			container.className = 'form-container';
 
@@ -111,11 +114,10 @@ class Register extends HTMLElement {
 			save.addEventListener('click', this.submitForm);
 			form.appendChild(save);
 
-
-
 			container.appendChild(form);
+			centerContainer.appendChild(container);
 
-			this.shadowRoot.appendChild(container);
+			this.shadowRoot.appendChild(centerContainer);
 		}
 	}
 }
