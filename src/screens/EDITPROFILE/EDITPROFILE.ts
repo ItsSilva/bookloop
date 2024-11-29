@@ -29,7 +29,6 @@ class EditProfile extends HTMLElement {
         this.changeBannerImage = this.changeBannerImage.bind(this);
         this.submitForm = this.submitForm.bind(this);
 
-        console.log("Estado inicial de appState.userData:", appState.userData);
     }
 
     connectedCallback() {
@@ -68,7 +67,6 @@ class EditProfile extends HTMLElement {
         }
 
         try {
-            console.log('Edited Product for FB', this.editedProduct);
             await dispatch(updateProfile(this.editedProduct)); // Actualizar perfil
             dispatch(navigate(Screens.PROFILE)); // Navegar al perfil
         } catch (error) {
